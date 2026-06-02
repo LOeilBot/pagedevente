@@ -90,12 +90,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .logo {
-      font-size: 1.4rem;
-      font-weight: 900;
-      letter-spacing: -.5px;
-    }
-
+    .logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -.5px; }
     .nav-cta { font-size: .9rem; padding: .6rem 1.4rem; }
 
     .hero {
@@ -137,7 +132,6 @@
     }
 
     .badge span { display: inline-block; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 1.5s infinite; }
-
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
 
     .hero h1 {
@@ -170,11 +164,7 @@
     .stat-num { font-size: 2rem; font-weight: 900; }
     .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
 
-    .mockup-section {
-      padding: 2rem 0 6rem;
-      display: flex;
-      justify-content: center;
-    }
+    .mockup-section { padding: 2rem 0 6rem; display: flex; justify-content: center; }
 
     .discord-card {
       background: #1E2124;
@@ -196,15 +186,7 @@
       margin-bottom: 1rem;
     }
 
-    .dc-channel {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-    }
-
+    .dc-channel { font-size: .75rem; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: .4rem; }
     .dc-msg { display: flex; gap: .8rem; margin-bottom: 1.2rem; }
 
     .dc-avatar {
@@ -255,15 +237,8 @@
       margin-top: 3rem;
     }
 
-    .step {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: border-color .2s;
-    }
+    .step { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: border-color .2s; }
     .step:hover { border-color: rgba(0,201,167,.4); }
-
     .step-num { font-size: 3rem; font-weight: 900; line-height: 1; margin-bottom: .8rem; }
     .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .step p { font-size: .88rem; color: var(--muted); }
@@ -275,15 +250,8 @@
       margin-top: 3rem;
     }
 
-    .feature-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: transform .2s, border-color .2s;
-    }
+    .feature-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform .2s, border-color .2s; }
     .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,201,167,.35); }
-
     .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
@@ -297,20 +265,9 @@
       margin-right: auto;
     }
 
-    .plan {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      position: relative;
-      transition: transform .2s;
-    }
+    .plan { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; position: relative; transition: transform .2s; }
     .plan:hover { transform: translateY(-4px); }
-
-    .plan.featured {
-      border-color: var(--teal);
-      background: linear-gradient(160deg, rgba(0,201,167,.07) 0%, var(--bg2) 100%);
-    }
+    .plan.featured { border-color: var(--teal); background: linear-gradient(160deg, rgba(0,201,167,.07) 0%, var(--bg2) 100%); }
 
     .plan-badge {
       position: absolute;
@@ -330,14 +287,7 @@
     .plan-desc { font-size: .88rem; color: var(--muted); margin: .8rem 0 1.5rem; }
 
     .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li {
-      font-size: .88rem;
-      padding: .45rem 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-    }
+    .plan-features li { font-size: .88rem; padding: .45rem 0; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap: .6rem; }
     .plan-features li::before { content: '✓'; color: var(--teal); font-weight: 700; }
     .plan-features li.no::before { content: '✕'; color: var(--muted); }
     .plan-features li.no { color: var(--muted); }
@@ -346,41 +296,20 @@
     .faq-item { border-bottom: 1px solid var(--border); }
 
     .faq-q {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 1.3rem 0;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      width: 100%; text-align: left; background: none; border: none;
+      color: var(--text); font-size: 1rem; font-weight: 600;
+      padding: 1.3rem 0; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
       font-family: inherit;
     }
 
     .faq-q::after { content: '+'; font-size: 1.4rem; color: var(--teal); transition: transform .2s; }
     .faq-item.open .faq-q::after { transform: rotate(45deg); }
 
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .3s ease, padding .3s;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.7;
-    }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; color: var(--muted); font-size: .92rem; line-height: 1.7; }
     .faq-item.open .faq-a { max-height: 200px; padding-bottom: 1.2rem; }
 
-    .cta-bottom {
-      text-align: center;
-      padding: 6rem 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
+    .cta-bottom { text-align: center; padding: 6rem 1.5rem; position: relative; overflow: hidden; }
     .cta-bottom::before {
       content: '';
       position: absolute;
@@ -390,29 +319,16 @@
       background: radial-gradient(ellipse, rgba(0,128,255,.1) 0%, transparent 70%);
       pointer-events: none;
     }
-
     .cta-bottom h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1rem; }
     .cta-bottom p { color: var(--muted); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
 
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: .82rem;
-    }
+    footer { border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .82rem; }
 
     .section-title { text-align: center; }
     .section-title h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -.02em; }
     .section-title p { color: var(--muted); margin-top: .8rem; max-width: 520px; margin-left: auto; margin-right: auto; }
 
-    .testimonials {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
+    .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
     .testi { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; }
     .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
     .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; }
@@ -436,10 +352,7 @@
 
 <section class="hero">
   <div class="badge"><span></span> Bot Discord en temps réel</div>
-  <h1>
-    Soyez le <span class="grad-text">premier</span> à voir<br />
-    les meilleures annonces
-  </h1>
+  <h1>Soyez le <span class="grad-text">premier</span> à voir<br />les meilleures annonces</h1>
   <p>L'Oeil scanne en continu et vous alerte instantanément sur Discord dès qu'une opportunité rare apparaît. Fini les bonnes affaires manquées.</p>
   <div class="hero-buttons">
     <a href="#pricing" class="btn-primary">Accéder à L'Oeil →</a>
@@ -565,36 +478,36 @@
     </div>
     <div class="testimonials">
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.4rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
-          <span style="color:var(--teal);font-weight:700;">Article trouvé ·</span>
-          <span style="color:var(--text);">Jordan 11 — 45€</span>
+        <div style="background:var(--bg3);border-radius:10px;height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:4rem;">👟</div>
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.3rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
+          <span style="color:var(--teal);font-weight:700;">Jordan 11 — 45€</span>
         </div>
-        <div class="testi-text">« J'ai chopé une paire de Jordan 11 à 45€ en moins de 3 minutes. Sans L'Oeil j'aurais jamais eu le temps de réagir. C'est indispensable. »</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">« C'était exactement ce que je cherchais. Je l'ai eu en quelques minutes. »</div>
         <div class="testi-author">
           <div class="testi-avatar">ML</div>
           <div><div class="testi-name">Mathieu L.</div><div class="testi-sub">Revendeur</div></div>
         </div>
       </div>
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.4rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
-          <span style="color:var(--teal);font-weight:700;">Article trouvé ·</span>
-          <span style="color:var(--text);">Adidas Spezial — 49€</span>
+        <div style="background:var(--bg3);border-radius:10px;height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:4rem;">👟</div>
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.3rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
+          <span style="color:var(--teal);font-weight:700;">Adidas Spezial — 49€</span>
         </div>
-        <div class="testi-text">« Franchement le bot est dingue. J'avais mis "adidas" en filtre et il m'a sorti des Spezial à 49€ pendant que je dormais. Je les ai eu au réveil. »</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">« Je les voulais depuis longtemps. L'Oeil me les a trouvées pendant que je dormais. »</div>
         <div class="testi-author">
           <div class="testi-avatar">SR</div>
           <div><div class="testi-name">Sarah R.</div><div class="testi-sub">Chineuse professionnelle</div></div>
         </div>
       </div>
       <div class="testi">
-        <div class="testi-stars">★★★★★</div>
-        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.4rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
-          <span style="color:var(--teal);font-weight:700;">Article trouvé ·</span>
-          <span style="color:var(--text);">Sweat Nike — 2€</span>
+        <div style="background:var(--bg3);border-radius:10px;height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:4rem;">👕</div>
+        <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:.3rem .7rem;margin-bottom:.8rem;font-size:.75rem;">
+          <span style="color:var(--teal);font-weight:700;">Sweat Nike — 2€</span>
         </div>
-        <div class="testi-text">« Un sweat Nike à 2€ repéré et acheté en 5 minutes. Revendu 35€. Le meilleur investissement du mois, remboursé en une seule transaction. »</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">« 2€ à l'achat, revendu 35€. Le meilleur investissement du mois. »</div>
         <div class="testi-author">
           <div class="testi-avatar">KC</div>
           <div><div class="testi-name">Kevin C.</div><div class="testi-sub">Trader d'occasion</div></div>
