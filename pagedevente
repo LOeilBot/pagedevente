@@ -1,0 +1,3 @@
+cd pagedevente
+git remote set-url origin https://github.com/loeilbot/pagedevente.git
+git push -u origin claude/fervent-lamport-LNztB
