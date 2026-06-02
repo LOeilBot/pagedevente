@@ -92,12 +92,7 @@
     .plan-name { font-size: .85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .8rem; }
     .plan-price { font-size: 2.8rem; font-weight: 900; letter-spacing: -.02em; line-height: 1; }
     .plan-price span { font-size: 1rem; font-weight: 500; color: var(--muted); }
-    .plan-desc { font-size: .88rem; color: var(--muted); margin: .8rem 0 1.5rem; }
-    .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li { font-size: .88rem; padding: .45rem 0; border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap: .6rem; }
-    .plan-features li::before { content: '✓'; color: var(--teal); font-weight: 700; }
-    .plan-features li.no::before { content: '✕'; color: var(--muted); }
-    .plan-features li.no { color: var(--muted); }
+    .plan-desc { font-size: .88rem; color: var(--muted); margin: .8rem 0 1.2rem; }
 
     .faq { max-width: 700px; margin: 3rem auto 0; }
     .faq-item { border-bottom: 1px solid var(--border); }
@@ -325,48 +320,28 @@
       <h2>Des tarifs <span class="grad-text">transparents</span></h2>
       <p>Commencez maintenant, sans engagement. Changez ou annulez à tout moment.</p>
     </div>
+    <div style="text-align:center;margin-bottom:2rem;color:var(--muted);font-size:.9rem;">Accès complet à toutes les fonctionnalités — choisissez simplement votre période.</div>
     <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(250px,1fr));max-width:1050px;">
       <div class="plan">
         <div class="plan-name">Mensuel</div>
         <div class="plan-price">14,99<span>€</span></div>
-        <div class="plan-desc" style="margin-bottom:.5rem;">Accès 1 mois complet</div>
-        <div style="font-size:.78rem;color:var(--muted);margin-bottom:1.5rem;">Sans engagement</div>
-        <ul class="plan-features">
-          <li>Filtres illimités</li>
-          <li>Alertes en temps réel (&lt; 5s)</li>
-          <li>1 serveur Discord</li>
-          <li>Analyse de prix</li>
-          <li class="no">Support prioritaire</li>
-        </ul>
+        <div class="plan-desc">Accès 1 mois complet</div>
+        <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.25);color:var(--teal);font-size:.78rem;font-weight:600;padding:.3rem .8rem;border-radius:50px;margin-bottom:2rem;">✦ 3 jours d'essai gratuit</div>
         <a href="#" class="btn-ghost" style="width:100%;justify-content:center;">Commencer →</a>
       </div>
       <div class="plan featured">
         <div class="plan-badge">Meilleure valeur</div>
         <div class="plan-name">Semestriel</div>
         <div class="plan-price">59,99<span>€</span></div>
-        <div class="plan-desc" style="margin-bottom:.5rem;">Accès 6 mois</div>
-        <div style="font-size:.78rem;color:var(--teal);margin-bottom:1.5rem;">→ Soit ~10€/mois — économisez 33%</div>
-        <ul class="plan-features">
-          <li>Filtres illimités</li>
-          <li>Alertes en temps réel (&lt; 5s)</li>
-          <li>3 serveurs Discord</li>
-          <li>Analyse de prix automatique</li>
-          <li>Support prioritaire</li>
-        </ul>
+        <div class="plan-desc">Accès 6 mois</div>
+        <div style="font-size:.82rem;color:var(--teal);margin-bottom:2rem;">→ Soit ~10€/mois — économisez 33%</div>
         <a href="#" class="btn-primary" style="width:100%;justify-content:center;">Choisir 6 mois →</a>
       </div>
       <div class="plan">
         <div class="plan-name">Annuel</div>
         <div class="plan-price">99,99<span>€</span></div>
-        <div class="plan-desc" style="margin-bottom:.5rem;">Accès 1 an complet</div>
-        <div style="font-size:.78rem;color:var(--teal);margin-bottom:1.5rem;">→ Soit ~8,33€/mois — économisez 44%</div>
-        <ul class="plan-features">
-          <li>Filtres illimités</li>
-          <li>Alertes en temps réel (&lt; 5s)</li>
-          <li>Serveurs Discord illimités</li>
-          <li>Analyse de prix automatique</li>
-          <li>Support prioritaire VIP</li>
-        </ul>
+        <div class="plan-desc">Accès 1 an complet</div>
+        <div style="font-size:.82rem;color:var(--teal);margin-bottom:2rem;">→ Soit ~8,33€/mois — économisez 44%</div>
         <a href="#" class="btn-ghost" style="width:100%;justify-content:center;">Choisir 1 an →</a>
       </div>
     </div>
