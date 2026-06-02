@@ -8,19 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --teal:   #00C9A7;
-      --blue:   #0080FF;
-      --grad:   linear-gradient(135deg, #00C9A7 0%, #0080FF 100%);
-      --bg:     #080C10;
-      --bg2:    #0E1318;
-      --bg3:    #141A22;
-      --border: rgba(0,201,167,.18);
-      --text:   #E8F0F8;
-      --muted:  #6B7A8D;
-    }
-
+    :root { --teal: #00C9A7; --blue: #0080FF; --grad: linear-gradient(135deg, #00C9A7 0%, #0080FF 100%); --bg: #080C10; --bg2: #0E1318; --border: rgba(0,201,167,.18); --text: #E8F0F8; --muted: #6B7A8D; }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
     .grad-text { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -61,7 +49,6 @@
     .dc-embed-title { font-weight: 700; color: #fff; margin-bottom: .3rem; }
     .dc-embed-field { color: #B9BBBE; line-height: 1.5; }
     .dc-embed-field strong { color: var(--teal); }
-    .dc-tag { display: inline-block; background: rgba(0,201,167,.15); color: var(--teal); font-size: .7rem; font-weight: 600; padding: .15rem .5rem; border-radius: 4px; margin-top: .5rem; }
     .new-badge { position: absolute; top: -10px; right: 20px; background: var(--grad); color: #fff; font-size: .7rem; font-weight: 700; padding: .2rem .7rem; border-radius: 50px; }
     .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
     .step { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: border-color .2s; }
@@ -93,8 +80,8 @@
     .plan-features li.no { color: var(--muted); }
     .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
     .testi { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; }
-    .testi-stars { color: #FFB800; margin-bottom: .8rem; }
-    .testi-text { font-size: .9rem; line-height: 1.7; margin-bottom: 1rem; }
+    .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
+    .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; }
     .testi-author { display: flex; align-items: center; gap: .7rem; }
     .testi-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:#fff; flex-shrink:0; }
     .testi-name { font-size: .85rem; font-weight: 700; }
@@ -142,18 +129,29 @@
       <div class="new-badge">🔴 LIVE</div>
       <div class="dc-channel"># alertes-annonces</div>
       <div class="dc-msg">
-        <div class="dc-avatar">👁</div>
+        <div class="dc-avatar" style="background:#000;padding:0;overflow:hidden;">
+          <svg viewBox="0 0 36 36" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#00BFFF"/>
+                <stop offset="100%" style="stop-color:#00FF88"/>
+              </linearGradient>
+            </defs>
+            <circle cx="18" cy="18" r="17" fill="#000" stroke="url(#lg)" stroke-width="2.5"/>
+            <path d="M7 18 C10 11, 26 11, 29 18 C26 25, 10 25, 7 18Z" fill="none" stroke="white" stroke-width="2"/>
+            <circle cx="18" cy="18" r="4" fill="none" stroke="white" stroke-width="2"/>
+            <circle cx="18" cy="18" r="1.8" fill="white"/>
+          </svg>
+        </div>
         <div class="dc-body">
           <div class="dc-name">L'Oeil Bot <span class="dc-time">Aujourd'hui à 14:32</span></div>
           <div class="dc-embed">
             <div class="dc-embed-title">🚨 Nouvelle annonce détectée !</div>
             <div class="dc-embed-field">
               <strong>Titre :</strong> iPhone 15 Pro Max 256Go — Comme neuf<br/>
-              <strong>Prix :</strong> 650€ <span style="color:#6B7A8D;text-decoration:line-through;font-size:.75em">Market : 950€</span><br/>
-              <strong>Ville :</strong> Paris 11e<br/>
+              <strong>Prix :</strong> 650€<br/>
               <strong>Posté il y a :</strong> 12 secondes
             </div>
-            <div class="dc-tag">⚡ Économie potentielle : 300€</div>
           </div>
         </div>
       </div>
