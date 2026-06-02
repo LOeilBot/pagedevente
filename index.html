@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>L'Oeil — Détectez les meilleures annonces avant tout le monde</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%230080FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='50' fill='url(%23g)'/%3E%3Ccircle cx='50' cy='50' r='38' fill='%23060A0E'/%3E%3Cpath d='M18 50 C26 28, 74 28, 82 50 C74 72, 26 72, 18 50Z' fill='white'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23060A0E'/%3E%3Ccircle cx='50' cy='50' r='7' fill='white'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300C9A7'/%3E%3Cstop offset='100%25' stop-color='%230080FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='50' fill='url(%23g)'/%3E%3Ccircle cx='50' cy='50' r='38' fill='%23060A0E'/%3E%3Cpath d='M18 50 C26 28, 74 28, 82 50 C74 72, 26 72, 18 50Z' fill='white'/%3E%3Ccircle cx='50' cy='50' r='14' fill='%23060A0E'/%3E%3Ccircle cx='50' cy='50' r='7' fill='white'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
@@ -240,17 +240,6 @@
     .dc-embed-field { color: #B9BBBE; line-height: 1.5; }
     .dc-embed-field strong { color: var(--teal); }
 
-    .dc-tag {
-      display: inline-block;
-      background: rgba(0,201,167,.15);
-      color: var(--teal);
-      font-size: .7rem;
-      font-weight: 600;
-      padding: .15rem .5rem;
-      border-radius: 4px;
-      margin-top: .5rem;
-    }
-
     .new-badge {
       position: absolute;
       top: -10px; right: 20px;
@@ -274,18 +263,11 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 2rem;
-      position: relative;
       transition: border-color .2s;
     }
     .step:hover { border-color: rgba(0,201,167,.4); }
 
-    .step-num {
-      font-size: 3rem;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: .8rem;
-    }
-
+    .step-num { font-size: 3rem; font-weight: 900; line-height: 1; margin-bottom: .8rem; }
     .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .step p { font-size: .88rem; color: var(--muted); }
 
@@ -306,13 +288,11 @@
     .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,201,167,.35); }
 
     .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
-
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
       margin-top: 3rem;
       max-width: 900px;
@@ -366,7 +346,6 @@
     .plan-features li.no { color: var(--muted); }
 
     .faq { max-width: 700px; margin: 3rem auto 0; }
-
     .faq-item { border-bottom: 1px solid var(--border); }
 
     .faq-q {
@@ -437,13 +416,7 @@
       margin-top: 3rem;
     }
 
-    .testi {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.8rem;
-    }
-
+    .testi { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; }
     .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
     .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; }
     .testi-author { display: flex; align-items: center; gap: .7rem; }
@@ -462,11 +435,12 @@
 <nav>
   <div class="logo grad-text">
     <svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00BFFF"/><stop offset="100%" stop-color="#00FF88"/></linearGradient></defs>
-      <circle cx="16" cy="16" r="15" fill="#000" stroke="url(#ng)" stroke-width="2"/>
-      <path d="M5 16 C8 9, 24 9, 27 16 C24 23, 8 23, 5 16Z" fill="none" stroke="white" stroke-width="1.8"/>
-      <circle cx="16" cy="16" r="4" fill="none" stroke="white" stroke-width="1.8"/>
-      <circle cx="16" cy="16" r="1.8" fill="white"/>
+      <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C9A7"/><stop offset="100%" stop-color="#0080FF"/></linearGradient></defs>
+      <circle cx="16" cy="16" r="16" fill="url(#ng)"/>
+      <circle cx="16" cy="16" r="12" fill="#060A0E"/>
+      <path d="M6 16 C9 9, 23 9, 26 16 C23 23, 9 23, 6 16Z" fill="white"/>
+      <circle cx="16" cy="16" r="4.5" fill="#060A0E"/>
+      <circle cx="16" cy="16" r="2.2" fill="white"/>
     </svg>
     L'Oeil
   </div>
@@ -499,16 +473,12 @@
       <div class="dc-msg">
         <div class="dc-avatar" style="background:#000;padding:0;overflow:hidden;">
           <svg viewBox="0 0 36 36" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00BFFF"/>
-                <stop offset="100%" style="stop-color:#00FF88"/>
-              </linearGradient>
-            </defs>
-            <circle cx="18" cy="18" r="17" fill="#000" stroke="url(#rg)" stroke-width="2.5"/>
-            <path d="M7 18 C10 11, 26 11, 29 18 C26 25, 10 25, 7 18Z" fill="none" stroke="white" stroke-width="2"/>
-            <circle cx="18" cy="18" r="4" fill="none" stroke="white" stroke-width="2"/>
-            <circle cx="18" cy="18" r="1.8" fill="white"/>
+            <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00C9A7"/><stop offset="100%" stop-color="#0080FF"/></linearGradient></defs>
+            <circle cx="18" cy="18" r="18" fill="url(#rg)"/>
+            <circle cx="18" cy="18" r="14" fill="#060A0E"/>
+            <path d="M7 18 C10 11, 26 11, 29 18 C26 25, 10 25, 7 18Z" fill="white"/>
+            <circle cx="18" cy="18" r="5" fill="#060A0E"/>
+            <circle cx="18" cy="18" r="2.5" fill="white"/>
           </svg>
         </div>
         <div class="dc-body">
@@ -549,7 +519,7 @@
       <div class="step">
         <div class="step-num grad-text">02</div>
         <h3>Configurez vos filtres</h3>
-        <p>Indiquez ce que vous cherchez : catégorie, budget max, zone géographique, mots-clés.</p>
+        <p>Indiquez ce que vous cherchez : catégorie, budget max, mots-clés, nom d'article.</p>
       </div>
       <div class="step">
         <div class="step-num grad-text">03</div>
@@ -575,7 +545,7 @@
       <div class="feature-card">
         <div class="feature-icon">🎯</div>
         <h3>Filtres ultra-précis</h3>
-        <p>Catégorie, prix, localisation, mots-clés, vendeur pro ou particulier — vous maîtrisez tout.</p>
+        <p>Catégorie, prix, mots-clés, nom d'article, date de mise en ligne — vous maîtrisez tout.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💬</div>
@@ -588,14 +558,14 @@
         <p>Le bot compare automatiquement le prix affiché avec le marché pour identifier les vraies opportunités.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Accès sécurisé</h3>
-        <p>Votre compte est protégé. Vos filtres et configurations sont sauvegardés en permanence.</p>
+        <div class="feature-icon">💳</div>
+        <h3>Abonnement simple</h3>
+        <p>Accès immédiat après souscription. Résiliez à tout moment, sans engagement caché.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🚀</div>
-        <h3>Multi-plateformes</h3>
-        <p>Surveillance simultanée sur plusieurs sites d'annonces pour ne jamais rien rater.</p>
+        <div class="feature-icon">🌐</div>
+        <h3>Plateforme unique</h3>
+        <p>Pour le moment concentré sur une seule plateforme pour vous offrir la meilleure expérience possible.</p>
       </div>
     </div>
   </div>
