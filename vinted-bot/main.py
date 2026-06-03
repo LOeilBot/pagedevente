@@ -16,10 +16,11 @@ log = logging.getLogger(__name__)
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
 SCAN_INTERVAL = int(os.getenv("SCAN_INTERVAL", "30"))
 VINTED_BASE = "https://www.vinted.fr"
+MAX_PER_SCAN = 10
 
-CATALOG_MEN    = [4]
-CATALOG_WOMEN  = [1]
-CATALOG_OTHERS = [306, 1906]
+CATALOG_IDS_MEN    = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 204, 208, 214, 215}
+CATALOG_IDS_WOMEN  = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
+CATALOG_IDS_OTHERS = {306, 307, 308, 309, 310, 1187, 1231, 2642}
 
 PREMIUM_BRANDS = [
     "nike", "air jordan", "jordan", "adidas", "yeezy", "puma", "new balance",
@@ -35,7 +36,11 @@ def get_price(item: dict) -> float:
     p = item.get("price", 0)
     if isinstance(p, dict):
         return float(p.get("amount", 0))
-    return float(p)
+    return float(p or 0)
+
+
+def get_catalog_id(item: dict) -> int:
+    return int(item.get("catalog_id") or item.get("category_id") or 0)
 
 
 CHANNELS = [
@@ -54,20 +59,20 @@ CHANNELS = [
     {
         "id": 1511054666593472533,
         "name": "#homme-garcon",
-        "params": {"catalog_ids": CATALOG_MEN, "order": "newest_first", "per_page": 48},
-        "filter": lambda item: True,
+        "params": {"catalog_ids": [4], "order": "newest_first", "per_page": 48},
+        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_WOMEN,
     },
     {
         "id": 1511758434146713892,
         "name": "#femme-fille",
-        "params": {"catalog_ids": CATALOG_WOMEN, "order": "newest_first", "per_page": 48},
-        "filter": lambda item: True,
+        "params": {"catalog_ids": [1], "order": "newest_first", "per_page": 48},
+        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN,
     },
     {
         "id": 1511758632243691820,
         "name": "#autres",
-        "params": {"catalog_ids": CATALOG_OTHERS, "order": "newest_first", "per_page": 48},
-        "filter": lambda item: True,
+        "params": {"catalog_ids": [306, 1187, 1231, 2642], "order": "newest_first", "per_page": 48},
+        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN | CATALOG_IDS_WOMEN,
     },
     {
         "id": 1511758714405781744,
@@ -119,6 +124,7 @@ def build_embed(item: dict) -> discord.Embed:
     else:
         price = raw_price
         currency = item.get("currency", "€")
+
     title = item.get("title", "Sans titre")
     brand = item.get("brand_title", "")
     size = item.get("size_title", "")
@@ -189,47 +195,56 @@ async def search_vinted(client: httpx.AsyncClient, params: dict) -> list[dict]:
 
 
 async def scan_and_post():
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        await get_vinted_token(client)
+    try:
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            await get_vinted_token(client)
 
-        for ch_cfg in CHANNELS:
-            channel_id = ch_cfg["id"]
-            params = dict(ch_cfg["params"])
-            filter_fn = ch_cfg["filter"]
+            for ch_cfg in CHANNELS:
+                channel_id = ch_cfg["id"]
+                params = dict(ch_cfg["params"])
+                filter_fn = ch_cfg["filter"]
 
-            items = await search_vinted(client, params)
-            channel = bot.get_channel(channel_id)
-            if channel is None:
-                log.warning("Channel %d not found", channel_id)
-                continue
-
-            new_count = 0
-            for item in reversed(items):
-                item_id = str(item.get("id", ""))
-                if not item_id:
-                    continue
-                if channel_id in posted.get(item_id, set()):
-                    continue
-                if not filter_fn(item):
-                    continue
-                if not item.get("photos"):
+                items = await search_vinted(client, params)
+                channel = bot.get_channel(channel_id)
+                if channel is None:
+                    log.warning("Channel %d not found", channel_id)
                     continue
 
-                item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
-                buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
-                embed = build_embed(item)
-                view = VintedView(item_url=item_url, buy_url=buy_url)
+                new_count = 0
+                for item in reversed(items):
+                    if new_count >= MAX_PER_SCAN:
+                        break
 
-                try:
-                    await channel.send(embed=embed, view=view)
-                    posted.setdefault(item_id, set()).add(channel_id)
-                    new_count += 1
-                    await asyncio.sleep(0.5)
-                except discord.HTTPException as e:
-                    log.error("Failed to post item %s to %s: %s", item_id, ch_cfg["name"], e)
+                    item_id = str(item.get("id", ""))
+                    if not item_id:
+                        continue
+                    if channel_id in posted.get(item_id, set()):
+                        continue
+                    if not filter_fn(item):
+                        continue
+                    if not item.get("photos"):
+                        continue
 
-            if new_count:
-                log.info("Posted %d new items to %s", new_count, ch_cfg["name"])
+                    item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
+                    buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
+                    embed = build_embed(item)
+                    view = VintedView(item_url=item_url, buy_url=buy_url)
+
+                    try:
+                        await channel.send(embed=embed, view=view)
+                        posted.setdefault(item_id, set()).add(channel_id)
+                        new_count += 1
+                        await asyncio.sleep(1)
+                    except discord.HTTPException as e:
+                        log.error("Failed to post item %s to %s: %s", item_id, ch_cfg["name"], e)
+
+                if new_count:
+                    log.info("Posted %d new items to %s", new_count, ch_cfg["name"])
+
+                await asyncio.sleep(2)
+
+    except Exception as e:
+        log.error("scan_and_post crashed: %s", e)
 
     if len(posted) > 5000:
         overflow = list(posted.keys())[: len(posted) - 5000]
@@ -240,7 +255,8 @@ async def scan_and_post():
 @bot.event
 async def on_ready():
     log.info("Vinted bot ready as %s", bot.user)
-    scanner.start()
+    if not scanner.is_running():
+        scanner.start()
 
 
 @tasks.loop(seconds=SCAN_INTERVAL)
