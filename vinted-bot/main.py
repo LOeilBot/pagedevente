@@ -140,11 +140,11 @@ def build_embed(item: dict) -> discord.Embed:
 async def get_vinted_token(client: httpx.AsyncClient) -> None:
     try:
         await client.get(
-            f"{VINTED_BASE}/auth/token_refresh",
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
+            f"{VINTED_BASE}/",
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
         )
     except Exception as e:
-        log.warning("Token refresh failed: %s", e)
+        log.warning("Session init failed: %s", e)
 
 
 async def search_vinted(client: httpx.AsyncClient, params: dict) -> list[dict]:
