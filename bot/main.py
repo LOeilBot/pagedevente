@@ -117,6 +117,7 @@ async def on_ready():
 async def main():
     config = uvicorn.Config(app, host="0.0.0.0", port=PORT, log_level="info")
     server = uvicorn.Server(config)
+    server.config.setup_event_loop()
     await asyncio.gather(
         bot.start(DISCORD_TOKEN),
         server.serve(),
