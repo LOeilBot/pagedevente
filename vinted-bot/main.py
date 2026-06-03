@@ -30,18 +30,26 @@ PREMIUM_BRANDS = [
     "armani", "moschino", "valentino", "dsquared", "philipp plein",
 ]
 
+
+def get_price(item: dict) -> float:
+    p = item.get("price", 0)
+    if isinstance(p, dict):
+        return float(p.get("amount", 0))
+    return float(p)
+
+
 CHANNELS = [
     {
         "id": 1511054495545557122,
         "name": "#moins-de-10€",
         "params": {"price_to": 9.99, "order": "newest_first", "per_page": 48},
-        "filter": lambda item: float(item.get("price", 999)) < 10,
+        "filter": lambda item: get_price(item) < 10,
     },
     {
         "id": 1511054553083154724,
         "name": "#10€-20€",
         "params": {"price_from": 10, "price_to": 20, "order": "newest_first", "per_page": 48},
-        "filter": lambda item: 10 <= float(item.get("price", 0)) <= 20,
+        "filter": lambda item: 10 <= get_price(item) <= 20,
     },
     {
         "id": 1511054666593472533,
@@ -104,8 +112,13 @@ class VintedView(discord.ui.View):
 
 
 def build_embed(item: dict) -> discord.Embed:
-    price = item.get("price", "?")
-    currency = item.get("currency", "€")
+    raw_price = item.get("price", {})
+    if isinstance(raw_price, dict):
+        price = raw_price.get("amount", "?")
+        currency = raw_price.get("currency_code", "€")
+    else:
+        price = raw_price
+        currency = item.get("currency", "€")
     title = item.get("title", "Sans titre")
     brand = item.get("brand_title", "")
     size = item.get("size_title", "")
