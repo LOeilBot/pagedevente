@@ -34,8 +34,10 @@ PREMIUM_BRANDS = [
     "asics", "salomon", "columbia", "patagonia",
 ]
 
-FEMME_URL_WORDS = ["femme", "fille", "feminin", "women", "woman", "girl"]
-FEMME_TITLE_WORDS = ["pour femme", " femme ", "femme,", "robe ", " jupe ", "soutien-gorge", "brassiere"]
+HOMME_KEYWORDS = [
+    "homme", "hommes", "garcon", "garçon", "man", "men", "boy", "boys",
+    "masculin", "masculine",
+]
 
 
 def get_price(item: dict) -> float:
@@ -55,13 +57,12 @@ def is_premium_brand(item: dict) -> bool:
 
 
 def is_homme(item: dict) -> bool:
-    url = item.get("url", "").lower()
-    if any(w in url for w in FEMME_URL_WORDS):
-        return False
-    title = item.get("title", "").lower()
-    if any(w in title for w in FEMME_TITLE_WORDS):
-        return False
-    return True
+    text = (
+        item.get("title", "") + " " +
+        item.get("description", "") + " " +
+        item.get("url", "")
+    ).lower()
+    return any(kw in text for kw in HOMME_KEYWORDS)
 
 
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
