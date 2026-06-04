@@ -34,10 +34,52 @@ PREMIUM_BRANDS = [
     "asics", "salomon", "columbia", "patagonia",
 ]
 
-HOMME_KEYWORDS = [
-    "homme", "hommes", "garcon", "garçon", "man", "men", "boy", "boys",
-    "masculin", "masculine",
+# ── Français
+FEMME_FR = [
+    "femme", "fille", "madame", "dame",
+    "pour femme", "pour fille", "vetements-femmes",
+    "robe", "jupette", "jupe",
+    "soutien-gorge", "soutien gorge", "soutiengorge",
+    "brassiere", "lingerie", "culotte", "string", "shorty", "bustier", "corset",
+    "crop top", "croptop", "crop-top", "caraco", "tunique", "blouse",
+    "maternite", "maternité", "grossesse", "allaitement",
+    "bikini", "tankini", "monokini",
+    "escarpins", "escarpin", "stiletto", "ballerine", "ballerines",
+    "sac a main", "sac à main",
 ]
+
+# ── Anglais
+FEMME_EN = [
+    "women", "woman", "girl", "girls", "ladies", "lady",
+    "women's", "womens",
+    "dress", "skirt", "bra", "bras", "legging", "leggings",
+    "blouse", "bikini", "lingerie", "maternity",
+    "heels", "stiletto",
+]
+
+# ── Allemand
+FEMME_DE = [
+    "damen", "dame", "frau", "frauen", "madchen",
+    "kleid", "kleider", "rock ",
+    "bh ", " bh",
+    "leggings damen", "bluse",
+]
+
+# ── Italien
+FEMME_IT = [
+    "donna", "donne", "ragazza", "ragazze",
+    "vestito", "gonna", "reggiseno",
+    "intimo donna", "lingerie donna",
+]
+
+# ── Espagnol / Portugais
+FEMME_ES_PT = [
+    "mujer", "mujeres", "chica", "chicas",
+    "vestido", "falda",
+    "mulher", "saia",
+]
+
+FEMME_ALL = FEMME_FR + FEMME_EN + FEMME_DE + FEMME_IT + FEMME_ES_PT
 
 
 def get_price(item: dict) -> float:
@@ -56,13 +98,13 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
-def is_homme(item: dict) -> bool:
+def not_femme(item: dict) -> bool:
     text = (
         item.get("title", "") + " " +
         item.get("description", "") + " " +
         item.get("url", "")
     ).lower()
-    return any(kw in text for kw in HOMME_KEYWORDS)
+    return not any(w in text for w in FEMME_ALL)
 
 
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
@@ -72,19 +114,19 @@ FETCHES = [
         "channel_id": 1512096461930627142,
         "name": "#alertes-vinted",
         "params": {"catalog_ids": [4], "per_page": 96},
-        "filter": lambda item: is_homme(item),
+        "filter": lambda item: not_femme(item),
     },
     {
         "channel_id": 1512096568818270299,
         "name": "#bonnes-affaires",
         "params": {"catalog_ids": [4], "price_to": 30, "per_page": 96},
-        "filter": lambda item: is_homme(item) and get_price(item) <= 30 and is_good_condition(item),
+        "filter": lambda item: not_femme(item) and get_price(item) <= 30 and is_good_condition(item),
     },
     {
         "channel_id": 1512096652570267658,
         "name": "#marques-premium",
         "params": {"catalog_ids": [4], "price_to": 50, "per_page": 96},
-        "filter": lambda item: is_homme(item) and get_price(item) <= 50 and is_premium_brand(item),
+        "filter": lambda item: not_femme(item) and get_price(item) <= 50 and is_premium_brand(item),
     },
 ]
 
@@ -189,7 +231,6 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
             channel_id = fetch_cfg["channel_id"]
             filter_fn = fetch_cfg["filter"]
             queued = 0
-
             for item in reversed(items):
                 item_id = str(item.get("id", ""))
                 if not item_id:
@@ -203,12 +244,9 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                 posted.setdefault(item_id, set()).add(channel_id)
                 await queues[channel_id].put(item)
                 queued += 1
-
             log.info("  → %s: %d mis en file", fetch_cfg["name"], queued)
-
         except Exception as e:
             log.error("Fetcher error %s: %s", fetch_cfg["name"], e)
-
         await asyncio.sleep(random.uniform(8, 15))
 
 
@@ -236,7 +274,7 @@ async def poster(channel_id: int) -> None:
         buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
         try:
             await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
-            log.info("Posté %s → salon %d", item_id, channel_id)
+            log.info("Posté %s → %d", item_id, channel_id)
         except discord.HTTPException as e:
             log.error("Erreur post: %s", e)
         q.task_done()
