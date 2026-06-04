@@ -118,7 +118,7 @@ class VintedView(discord.ui.View):
     def __init__(self, item_url: str, buy_url: str):
         super().__init__()
         self.add_item(discord.ui.Button(label="👁 Voir l'annonce", style=discord.ButtonStyle.link, url=item_url))
-        self.add_item(discord.ui.Button(label="🛒 Acheter", style=discord.ButtonStyle.link, url=buy_url))
+        self.add_item(discord.ui.Button(label="💬 Contacter le vendeur", style=discord.ButtonStyle.link, url=item_url + "/want_to_buy"))
 
 
 def build_embed(item: dict) -> discord.Embed:
