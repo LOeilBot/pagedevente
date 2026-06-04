@@ -37,6 +37,7 @@ PREMIUM_BRANDS = [
 ]
 
 BLACKLIST = [
+    # Femme FR
     "femme", "fille", "madame", "dame", "vetements-femmes", "mixte",
     "robe", "jupe", "jupette",
     "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
@@ -44,25 +45,62 @@ BLACKLIST = [
     "maternite", "maternité", "grossesse",
     "bikini", "tankini", "monokini",
     "escarpins", "stiletto", "ballerine",
+    # Femme EN
     "women", "woman", "girl", "girls", "ladies", "lady",
     "women's", "womens", "dress", "skirt", "bra ", " bra", "maternity", "heels",
+    # Femme DE
     "damen", "frau", "frauen", "kleid", "kleider",
+    # Femme IT
     "donna", "donne", "ragazza", "vestito", "gonna", "reggiseno",
+    # Femme ES/PT
     "mujer", "mujeres", "chica", "vestido", "falda", "mulher", "saia",
-    "calecon", "caleçon", "culotte", "string", "shorty", "slip",
+    # Sous-vêtements (FR+EN+IT+DE+ES)
+    "calecon", "caleçon", "culotte", "string", "shorty", "slip", "brief", "briefs",
+    "boxer", "boxers", "underwear", "mutande", "mutandine", "calzoncillo", "unterhose",
+    # Chaussettes
     "chaussette", "chaussettes", "socken", "socks",
+    # Ceintures
     "ceinture", "belt", "cinturon", "cintura",
+    # Montres
     "montre", "watch", "orologio", "uhr", "reloj",
-    "cravate", "tie ", " tie", "corbata", "krawatte",
+    # Cravates (FR + IT + ES + DE)
+    "cravate", "cravatta", "corbata", "krawatte", "tie ", " tie",
+    # Lunettes
     "lunette", "lunettes", "glasses", "sunglasses", "occhiali", "brille", "gafas",
+    # Bijoux (FR + ES + IT + DE + EN)
     "bijou", "bijoux", "collier", "bracelet", "bague", "boucle d'oreille",
     "jewelry", "necklace", "earring", "ring ", " ring",
+    "collar ", " collar", "collana", "colares", "colgante",
+    "armband", "silberarmband", "goldarmband", "kette ", " kette", "anhänger",
+    "strass", "pendentif", "charm ", " charm",
+    # Chapeaux (FR + IT + ES + DE)
     "chapeau", "casquette", "bonnet", "hat ", " hat",
+    "cappellino", "cappello", "gorra", "mütze",
+    # Sacs (FR + IT + DE)
     "sac ", " sac", "bag ", " bag", "backpack", "pochette",
-    "portefeuille", "wallet",
+    "portefeuille", "wallet", "marsupio", "tasche",
+    # Parfums / hygiène (FR + IT + ES + DE + EN)
     "parfum", "perfume", "cologne", "fragrance", "eau de toilette", "eau de parfum",
     "edp", "edt", "deodorant", "déodorant", "aftershave", "after-shave",
+    "profumo",
+    "gel douche", "gel de ducha", "dusche", "duschgel", "shampoo", "shampooing",
+    "savon", "soap", "shower", "lotion", "crème", "creme", "soin ",
+    # Rasoirs / lames
+    "rasoir", "razor", "gillette", "lame ", " lame", "recambio", "recambios",
+    # Divers
     "peluche", "jouet", "toy",
+]
+
+# Chaussures : bloquées dans #alertes et #bonnes-affaires, autorisées dans #marques-premium
+SHOES = [
+    "chaussure", "chaussures", "shoe", "shoes",
+    "basket", "baskets", "sneaker", "sneakers",
+    "crampon", "crampons", "botte", "bottes", "boot", "boots",
+    "mocassin", "mocassins", "espadrille", "espadrilles",
+    "sandale", "sandales", "sandal", "sandals",
+    "tong", "tongs", "infradito", "claquette", "claquettes",
+    "scarpa", "scarpe", "schuh", "schuhe", "zapato", "zapatos",
+    "loafer", "derby", "oxford",
 ]
 
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
@@ -102,6 +140,15 @@ def not_femme(item: dict) -> bool:
     return not any(w in text for w in BLACKLIST)
 
 
+def not_shoe(item: dict) -> bool:
+    text = (
+        item.get("title", "") + " " +
+        item.get("url", "") + " " +
+        item.get("category_title", "")
+    ).lower()
+    return not any(w in text for w in SHOES)
+
+
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
@@ -131,24 +178,42 @@ def build_embed(item: dict) -> discord.Embed:
     photo_url = photos[0].get("url", "") if photos else ""
 
     condition_map = {
-        "new_with_tags":    ("✨ Neuf avec étiquettes", 0x2ECC71),
-        "new_without_tags": ("✨ Neuf sans étiquettes", 0x27AE60),
-        "very_good":        ("👍 Très bon état",        0x3498DB),
-        "good":             ("👌 Bon état",             0xF39C12),
-        "satisfactory":     ("🔸 État satisfaisant",    0xE67E22),
+        "new_with_tags":    "✨ Neuf avec étiquettes",
+        "new_without_tags": "✨ Neuf sans étiquettes",
+        "very_good":        "👍 Très bon état",
+        "good":             "👌 Bon état",
+        "satisfactory":     "🔸 État satisfaisant",
     }
-    condition_label, color = condition_map.get(condition, (condition, 0x95A5A6))
+    condition_label = condition_map.get(condition, condition)
 
-    embed = discord.Embed(title=title, color=color)
-    embed.add_field(name="💰 Prix", value=f"**{price} {currency}**", inline=True)
-    embed.add_field(name="📏 Taille", value=size if size else "—", inline=True)
-    embed.add_field(name="​", value="​", inline=True)
-    embed.add_field(name="🏷️ Marque", value=f"**{brand}**" if brand else "—", inline=True)
-    embed.add_field(name="✨ État", value=condition_label if condition_label else "—", inline=True)
-    embed.add_field(name="​", value="​", inline=True)
+    raw = get_price(item)
+    if is_premium_brand(item):
+        multiplier = random.uniform(1.7, 2.2)
+    else:
+        multiplier = random.uniform(1.4, 1.7)
+    resale = round(raw * multiplier - 0.01, 2)
+    profit = round(resale - raw, 2)
+    margin_pct = round(profit / raw * 100) if raw > 0 else 0
+    resale_str = f"{resale:.2f} {currency}"
+    profit_str = f"+{profit:.2f} {currency}"
+
+    desc = f"📊  Marge estimée : **+{margin_pct}%**"
+    embed = discord.Embed(title=f"**{title}**", description=desc, color=0x00D4FF)
+
+    embed.add_field(name="💰  Prix d'achat",      value=f"```{price} {currency}```", inline=True)
+    embed.add_field(name="📈  Revente conseillée", value=f"```{resale_str}```",       inline=True)
+    embed.add_field(name="💵  Profit estimé",      value=f"```{profit_str}```",       inline=True)
+
+    embed.add_field(name="📐  Taille", value=size if size else "—",                      inline=True)
+    embed.add_field(name="🏷️  Marque", value=f"**{brand}**" if brand else "—",          inline=True)
+    embed.add_field(name="✨  État",   value=condition_label if condition_label else "—", inline=True)
+
     if photo_url:
         embed.set_image(url=photo_url)
-    embed.set_footer(text=f"Vinted • {brand}" if brand else "Vinted", icon_url="https://cdn.discordapp.com/attachments/1511054295452225626/1512185116439347261/FRIPEX_4.png")
+    embed.set_footer(
+        text=f"Vinted  ·  {brand}" if brand else "Vinted",
+        icon_url="https://cdn.discordapp.com/attachments/1511054295452225626/1512185116439347261/FRIPEX_4.png"
+    )
     embed.timestamp = datetime.now(timezone.utc)
     return embed
 
@@ -183,13 +248,13 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
             "channel_id": 1512096461930627142,
             "name": "#alertes-vinted",
             "extra": "&price_to=50",
-            "filter": lambda item: not_femme(item) and get_price(item) <= 50,
+            "filter": lambda item: not_femme(item) and not_shoe(item) and get_price(item) <= 50,
         },
         {
             "channel_id": 1512096568818270299,
             "name": "#bonnes-affaires",
             "extra": "&price_to=30",
-            "filter": lambda item: not_femme(item) and get_price(item) <= 30,
+            "filter": lambda item: not_femme(item) and not_shoe(item) and get_price(item) <= 30,
         },
         {
             "channel_id": 1512096652570267658,
