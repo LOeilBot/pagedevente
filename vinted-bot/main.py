@@ -59,39 +59,66 @@ BLACKLIST = [
     "boxer", "boxers", "underwear", "mutande", "mutandine", "calzoncillo", "unterhose",
     # Chaussettes
     "chaussette", "chaussettes", "socken", "socks",
-    # Ceintures
+    # Ceintures / bretelles
     "ceinture", "belt", "cinturon", "cintura",
+    "bretelle", "bretelles", "suspender", "suspenders", "hosenträger", "hosentrager",
     # Montres
     "montre", "watch", "orologio", "uhr", "reloj",
     # Cravates (FR + IT + ES + DE)
     "cravate", "cravatta", "corbata", "krawatte", "tie ", " tie",
     # Lunettes
     "lunette", "lunettes", "glasses", "sunglasses", "occhiali", "brille", "gafas",
+    "zonnebril", "eyewear", "eye wear", "optical", "lentille",
     # Bijoux (FR + ES + IT + DE + EN)
     "bijou", "bijoux", "collier", "bracelet", "bague", "boucle d'oreille",
     "jewelry", "necklace", "earring", "ring ", " ring",
     "collar ", " collar", "collana", "colares", "colgante",
     "armband", "silberarmband", "goldarmband", "kette ", " kette", "anhänger",
+    "armreif", "armreifen", "reif ", " reif",
+    "braccialetto", "bracciale", "ciondolo", "cavigliera",
     "strass", "pendentif", "charm ", " charm",
-    # Chapeaux (FR + IT + ES + DE)
+    "pendientes", "pendiente", "arete", "aretes", "orecchino", "orecchini",
+    # Porte-cartes / portefeuilles / porte-monnaie
+    "cardholder", "card holder", "porte-carte", "porte carte", "portacarte",
+    "kartenhalter", "portafogli", "billetera",
+    "porte-monnaie", "porte monnaie", "portemonnaie", "coin purse", "monedero",
+    "portamonete", "geldbörse", "geldbeutel", "brieftasche",
+    # Chapeaux (FR + IT + ES + DE + NL)
     "chapeau", "casquette", "bonnet", "hat ", " hat",
     "cappellino", "cappello", "gorra", "mütze",
-    # Sacs (FR + IT + DE)
+    "hute", "hüte", "hut ", " hut", "muts ", "pet ", "beanie",
+    # Sacs (FR + IT + DE + ES/PT + NL)
     "sac ", " sac", "bag ", " bag", "backpack", "pochette",
     "portefeuille", "wallet", "marsupio", "tasche",
+    "mochila", "bolso", "bolsa", "rugzak", "rucksack",
+    "zaino", "borsa", "borsello", "borsetta",
+    "portemonnee", "portemonie", "geldbeutel",
     # Parfums / hygiène (FR + IT + ES + DE + EN)
     "parfum", "perfume", "cologne", "fragrance", "eau de toilette", "eau de parfum",
     "edp", "edt", "deodorant", "déodorant", "aftershave", "after-shave",
     "profumo",
     "gel douche", "gel de ducha", "dusche", "duschgel", "shampoo", "shampooing",
     "savon", "soap", "shower", "lotion", "crème", "creme", "soin ",
-    # Rasoirs / lames
+    # Rasoirs / lames / soins barbe
     "rasoir", "razor", "gillette", "lame ", " lame", "recambio", "recambios",
+    "beard", "barbe", "after shave", "baume barbe", "huile barbe",
+    # Cosmétiques / soins corps
+    "cofanetto", "coffret", "kit soin", "soin corps", "body oil", "body lotion",
+    "sol de janeiro", "nuxe", "rituals", "loccitane", "l'occitane",
+    # Parfums / musc
+    "musc", "musk", "oud ", " oud", "attar", "huile parfumée",
+    # Pièces auto / moto
+    "phare", "feu arrière", "pare-choc", "pare choc", "carrosserie", "jante",
+    "farolin", "farol ", "fanale", "scheinwerfer", "stoßstange",
+    "pièce auto", "piece auto", "pièce moto", "piece moto",
+    "amortisseur", "radiateur", "alternateur", "embrayage",
     # Divers
-    "peluche", "jouet", "toy",
+    "peluche", "jouet", "toy", "lapin", "pilou", "déguisement", "deguisement", "costume",
+    "action man", "action figure", "figurine",
+    # Marques femme connues
+    "cache cache", "pimkie", "jennyfer", "primark femme", "shein", "zara femme",
 ]
 
-# Chaussures : bloquées dans #alertes et #bonnes-affaires, autorisées dans #marques-premium
 SHOES = [
     "chaussure", "chaussures", "shoe", "shoes",
     "basket", "baskets", "sneaker", "sneakers",
@@ -101,6 +128,15 @@ SHOES = [
     "tong", "tongs", "infradito", "claquette", "claquettes",
     "scarpa", "scarpe", "schuh", "schuhe", "zapato", "zapatos",
     "loafer", "derby", "oxford",
+    "air force", "air max", "jordan 1", "jordan 4", "jordan 11",
+    "yeezy 350", "yeezy 700", "yeezy boost",
+    "dunk low", "dunk high", "new balance 550", "new balance 990",
+    "ultraboost", "superstar", "stan smith",
+    "chuck taylor", "chuck 70", "all star",
+    "old skool", "sk8", "authentic",
+    "gel-", "gel lyte", "gel kayano",
+    "speedcross", "xa pro",
+    "timberland 6", "timberland boot",
 ]
 
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
@@ -186,26 +222,11 @@ def build_embed(item: dict) -> discord.Embed:
     }
     condition_label = condition_map.get(condition, condition)
 
-    raw = get_price(item)
-    if is_premium_brand(item):
-        multiplier = random.uniform(1.7, 2.2)
-    else:
-        multiplier = random.uniform(1.4, 1.7)
-    resale = round(raw * multiplier - 0.01, 2)
-    profit = round(resale - raw, 2)
-    margin_pct = round(profit / raw * 100) if raw > 0 else 0
-    resale_str = f"{resale:.2f} {currency}"
-    profit_str = f"+{profit:.2f} {currency}"
+    embed = discord.Embed(title=f"**{title}**", color=0x00D4FF)
 
-    desc = f"📊  Marge estimée : **+{margin_pct}%**"
-    embed = discord.Embed(title=f"**{title}**", description=desc, color=0x00D4FF)
-
-    embed.add_field(name="💰  Prix d'achat",      value=f"```{price} {currency}```", inline=True)
-    embed.add_field(name="📈  Revente conseillée", value=f"```{resale_str}```",       inline=True)
-    embed.add_field(name="💵  Profit estimé",      value=f"```{profit_str}```",       inline=True)
-
-    embed.add_field(name="📐  Taille", value=size if size else "—",                      inline=True)
-    embed.add_field(name="🏷️  Marque", value=f"**{brand}**" if brand else "—",          inline=True)
+    embed.add_field(name="💰  Prix",   value=f"```{price} {currency}```",                inline=True)
+    embed.add_field(name="📐  Taille", value=size if size else "—",                       inline=True)
+    embed.add_field(name="🏷️  Marque", value=f"**{brand}**" if brand else "—",           inline=True)
     embed.add_field(name="✨  État",   value=condition_label if condition_label else "—", inline=True)
 
     if photo_url:
