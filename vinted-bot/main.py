@@ -251,7 +251,7 @@ async def poster(channel_id: int) -> None:
             continue
         item_id = str(item.get("id", ""))
         item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
-        buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
+        buy_url = item_url + "/buy"
         try:
             await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
             log.info("Posté %s → %d", item_id, channel_id)
