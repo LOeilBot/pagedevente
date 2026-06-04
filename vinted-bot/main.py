@@ -51,6 +51,22 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
+FEMME_KEYWORDS = [
+    "femme", "fille", "feminin", "women", "woman", "girl", "ladies",
+    "robe", "jupe", "soutien", "brassiere", "lingerie", "maternite",
+    "grossesse",
+]
+
+def is_homme(item: dict) -> bool:
+    catalog = item.get("catalog_title", "").lower()
+    title = item.get("title", "").lower()
+    if any(kw in catalog for kw in FEMME_KEYWORDS):
+        return False
+    if any(kw in title for kw in ["pour femme", "femme", " robe ", " jupe ", "soutien-gorge"]):
+        return False
+    return True
+
+
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
 
 FETCHES = [
@@ -58,19 +74,19 @@ FETCHES = [
         "channel_id": 1512096461930627142,
         "name": "#alertes-vinted",
         "params": {"catalog_ids": [4], "per_page": 96},
-        "filter": lambda item: True,
+        "filter": lambda item: is_homme(item),
     },
     {
         "channel_id": 1512096568818270299,
         "name": "#bonnes-affaires",
         "params": {"catalog_ids": [4], "price_to": 30, "per_page": 96},
-        "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
+        "filter": lambda item: is_homme(item) and get_price(item) <= 30 and is_good_condition(item),
     },
     {
         "channel_id": 1512096652570267658,
         "name": "#marques-premium",
         "params": {"catalog_ids": [4], "price_to": 50, "per_page": 96},
-        "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
+        "filter": lambda item: is_homme(item) and get_price(item) <= 50 and is_premium_brand(item),
     },
 ]
 
