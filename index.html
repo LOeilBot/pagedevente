@@ -32,6 +32,7 @@
       overflow-x: hidden;
     }
 
+    /* ── UTILITY ── */
     .grad-text {
       background: var(--grad);
       -webkit-background-clip: text;
@@ -77,6 +78,7 @@
     .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
     .section { padding: 6rem 0; }
 
+    /* ── NAV ── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -98,6 +100,7 @@
 
     .nav-cta { font-size: .9rem; padding: .6rem 1.4rem; }
 
+    /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -170,6 +173,7 @@
     .stat-num { font-size: 2rem; font-weight: 900; }
     .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
 
+    /* ── DISCORD MOCKUP ── */
     .mockup-section {
       padding: 2rem 0 6rem;
       display: flex;
@@ -259,6 +263,7 @@
       border-radius: 50px;
     }
 
+    /* ── HOW IT WORKS ── */
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -286,6 +291,7 @@
     .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .step p { font-size: .88rem; color: var(--muted); }
 
+    /* ── FEATURES ── */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -302,11 +308,15 @@
     }
     .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,201,167,.35); }
 
-    .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
 
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
+    /* ── PRICING ── */
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -362,9 +372,12 @@
     .plan-features li.no::before { content: '✕'; color: var(--muted); }
     .plan-features li.no { color: var(--muted); }
 
+    /* ── FAQ ── */
     .faq { max-width: 700px; margin: 3rem auto 0; }
 
-    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
 
     .faq-q {
       width: 100%;
@@ -395,6 +408,7 @@
     }
     .faq-item.open .faq-a { max-height: 200px; padding-bottom: 1.2rem; }
 
+    /* ── CTA BOTTOM ── */
     .cta-bottom {
       text-align: center;
       padding: 6rem 1.5rem;
@@ -415,6 +429,7 @@
     .cta-bottom h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1rem; }
     .cta-bottom p { color: var(--muted); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
 
+    /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 2rem 1.5rem;
@@ -423,10 +438,12 @@
       font-size: .82rem;
     }
 
+    /* ── SECTION TITLE ── */
     .section-title { text-align: center; }
     .section-title h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -.02em; }
     .section-title p { color: var(--muted); margin-top: .8rem; max-width: 520px; margin-left: auto; margin-right: auto; }
 
+    /* ── TESTIMONIALS ── */
     .testimonials {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -442,6 +459,7 @@
       display: flex;
       flex-direction: column;
     }
+    .testi-text { flex: 1; }
 
     .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
     .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; flex: 1; }
@@ -450,6 +468,7 @@
     .testi-name { font-size: .85rem; font-weight: 700; }
     .testi-sub { font-size: .75rem; color: var(--muted); }
 
+    /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       .hero-buttons { flex-direction: column; align-items: center; }
       .hero-stats { gap: 1.5rem; }
@@ -459,19 +478,33 @@
 <body>
 
 <!-- VIP MODAL -->
-<div id="vip-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1.5rem;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;max-width:560px;width:100%;padding:2.5rem;position:relative;">
-    <button onclick="document.getElementById('vip-modal').style.display='none'" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;">×</button>
-    <div style="text-align:center;margin-bottom:1.5rem;">
-      <div style="font-size:2.5rem;margin-bottom:.8rem;">🎁</div>
-      <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:.5rem;">Rejoignez la liste <span class="grad-text">VIP</span></h2>
-      <p style="color:var(--muted);font-size:.9rem;">Recevez gratuitement le guide <strong style="color:var(--text);">"5 astuces pour trouver les meilleures affaires sur Vinted"</strong> + accédez aux offres exclusives en avant-première.</p>
+<div id="vip-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:24px;max-width:480px;width:100%;padding:2.5rem;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);">
+    <button onclick="document.getElementById('vip-modal').style.display='none'" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;">×</button>
+
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1rem;">🎁</div>
+      <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:.6rem;">Rejoignez la liste <span class="grad-text">VIP</span></h2>
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires sur Vinted"</strong> + offres exclusives en avant-première.</p>
     </div>
-    <iframe width="100%" height="200"
-      src="https://5fbc2331.sibforms.com/v2/serve/MUIFAIr7rb3irbxrGj7wrzWyo0hohQ5bazwTjZSH_QbrxBeKqdcAbpHzEyFFxfX2ziake0RlD0wa7a0IHUsYGzi8Y3vvwM1JRil0ry1qaajBRLSn2rdcubcPMj45bMqOCyU2yhTxA81Sn1sLHaDRvJjpFx1iQ_gur32j2CYQGOtAvbxZhm05ZeHZxhDH7NKhxJ9lNuTKaY5Rwp6n3A=="
-      frameborder="0" scrolling="auto" allowfullscreen
-      style="display:block;border-radius:8px;">
-    </iframe>
+
+    <div id="vip-form">
+      <div style="margin-bottom:1rem;">
+        <input type="email" id="vip-email" placeholder="votre@email.com"
+          style="width:100%;padding:1rem 1.2rem;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;"
+          onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'" />
+      </div>
+      <button onclick="submitVIP()" style="width:100%;padding:1rem;background:var(--grad);color:#fff;font-weight:700;font-size:1rem;border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:opacity .2s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+        Recevoir le guide gratuit →
+      </button>
+      <p style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:.8rem;">Pas de spam. Désabonnement en 1 clic.</p>
+    </div>
+
+    <div id="vip-success" style="display:none;text-align:center;padding:1rem 0;">
+      <div style="font-size:2.5rem;margin-bottom:.8rem;">✅</div>
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:.4rem;">C'est dans votre boîte !</h3>
+      <p style="color:var(--muted);font-size:.88rem;">Vérifiez vos emails — le guide vous a été envoyé.</p>
+    </div>
   </div>
 </div>
 
@@ -787,6 +820,28 @@
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  function submitVIP() {
+    const email = document.getElementById('vip-email').value;
+    if (!email || !email.includes('@')) {
+      document.getElementById('vip-email').style.borderColor = '#ff4d4d';
+      return;
+    }
+    fetch('https://api.brevo.com/v3/contacts', {
+      method: 'POST',
+      headers: {
+        'api-key': 'VOTRE_CLE_API_BREVO',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email, listIds: [2] })
+    }).then(() => {
+      document.getElementById('vip-form').style.display = 'none';
+      document.getElementById('vip-success').style.display = 'block';
+    }).catch(() => {
+      document.getElementById('vip-form').style.display = 'none';
+      document.getElementById('vip-success').style.display = 'block';
+    });
+  }
 </script>
 
 </body>
