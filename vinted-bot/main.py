@@ -148,17 +148,16 @@ def build_embed(item: dict) -> discord.Embed:
     }
     condition_label, color = condition_map.get(condition, (condition, 0x95A5A6))
 
-    embed = discord.Embed(title=f"🛍️ {title}", color=color)
+    embed = discord.Embed(title=title, color=color)
     embed.add_field(name="💰 Prix", value=f"**{price} {currency}**", inline=True)
-    if brand:
-        embed.add_field(name="🏷️ Marque", value=f"**{brand}**", inline=True)
-    if size:
-        embed.add_field(name="📏 Taille", value=size, inline=True)
-    if condition_label:
-        embed.add_field(name="✨ État", value=condition_label, inline=False)
+    embed.add_field(name="📏 Taille", value=size if size else "—", inline=True)
+    embed.add_field(name="​", value="​", inline=True)
+    embed.add_field(name="🏷️ Marque", value=f"**{brand}**" if brand else "—", inline=True)
+    embed.add_field(name="✨ État", value=condition_label if condition_label else "—", inline=True)
+    embed.add_field(name="​", value="​", inline=True)
     if photo_url:
         embed.set_image(url=photo_url)
-    embed.set_footer(text=f"Vinted • {brand}" if brand else "Vinted", icon_url="https://www.vinted.fr/favicon.ico")
+    embed.set_footer(text=f"Vinted • {brand}" if brand else "Vinted", icon_url="https://cdn.discordapp.com/attachments/1511054295452225626/1512185116439347261/FRIPEX_4.png")
     embed.timestamp = datetime.now(timezone.utc)
     return embed
 
