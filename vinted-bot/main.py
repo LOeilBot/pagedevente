@@ -31,8 +31,11 @@ PREMIUM_BRANDS = [
     "armani", "moschino", "valentino", "dsquared", "philipp plein", "carhartt",
     "stussy", "bape", "represent", "ami", "acne studios", "levi", "levis",
     "champion", "polo", "fred perry", "timberland", "vans", "converse", "reebok",
-    "asics", "salomon", "arc'teryx", "patagonia", "columbia",
+    "asics", "salomon", "columbia", "patagonia",
 ]
+
+FEMME_URL_WORDS = ["femme", "fille", "feminin", "women", "woman", "girl"]
+FEMME_TITLE_WORDS = ["pour femme", " femme ", "femme,", "robe ", " jupe ", "soutien-gorge", "brassiere"]
 
 
 def get_price(item: dict) -> float:
@@ -51,18 +54,12 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
-FEMME_KEYWORDS = [
-    "femme", "fille", "feminin", "women", "woman", "girl", "ladies",
-    "robe", "jupe", "soutien", "brassiere", "lingerie", "maternite",
-    "grossesse",
-]
-
 def is_homme(item: dict) -> bool:
-    catalog = item.get("catalog_title", "").lower()
-    title = item.get("title", "").lower()
-    if any(kw in catalog for kw in FEMME_KEYWORDS):
+    url = item.get("url", "").lower()
+    if any(w in url for w in FEMME_URL_WORDS):
         return False
-    if any(kw in title for kw in ["pour femme", "femme", " robe ", " jupe ", "soutien-gorge"]):
+    title = item.get("title", "").lower()
+    if any(w in title for w in FEMME_TITLE_WORDS):
         return False
     return True
 
@@ -92,7 +89,6 @@ FETCHES = [
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
-
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
 
@@ -146,12 +142,17 @@ def build_embed(item: dict) -> discord.Embed:
     return embed
 
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "fr-FR,fr;q=0.9",
+    "Referer": f"{VINTED_BASE}/",
+}
+
+
 async def get_vinted_session(client: httpx.AsyncClient) -> None:
     try:
-        await client.get(
-            f"{VINTED_BASE}/",
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
-        )
+        await client.get(f"{VINTED_BASE}/", headers=HEADERS)
     except Exception as e:
         log.warning("Session init failed: %s", e)
 
@@ -160,21 +161,15 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
     query: dict = {"order": "newest_first", "page": 1}
     catalog_ids = params.pop("catalog_ids", [])
     query.update(params)
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/plain, */*",
-        "Accept-Language": "fr-FR,fr;q=0.9",
-        "Referer": f"{VINTED_BASE}/",
-    }
     param_str = "&".join(f"{k}={v}" for k, v in query.items())
     if catalog_ids:
         param_str += "&" + "&".join(f"catalog_ids[]={cid}" for cid in catalog_ids)
     url = f"{VINTED_BASE}/api/v2/catalog/items?{param_str}"
     try:
-        resp = await client.get(url, headers=headers, timeout=15)
+        resp = await client.get(url, headers=HEADERS, timeout=15)
         if resp.status_code == 401:
             await get_vinted_session(client)
-            resp = await client.get(url, headers=headers, timeout=15)
+            resp = await client.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
         items = resp.json().get("items", [])
         log.info("Fetched %d items — %s", len(items), url[:90])
@@ -208,10 +203,10 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                 await queues[channel_id].put(item)
                 queued += 1
 
-            log.info("  → %s: %d items queued", fetch_cfg["name"], queued)
+            log.info("  → %s: %d mis en file", fetch_cfg["name"], queued)
 
         except Exception as e:
-            log.error("Fetcher error for %s: %s", fetch_cfg["name"], e)
+            log.error("Fetcher error %s: %s", fetch_cfg["name"], e)
 
         await asyncio.sleep(random.uniform(8, 15))
 
@@ -219,12 +214,11 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
 async def scanner_loop() -> None:
     async with httpx.AsyncClient(follow_redirects=True) as client:
         while True:
-            log.info("=== Scanning Vinted ===")
+            log.info("=== Scan Vinted ===")
             try:
                 await fetch_all_channels(client)
             except Exception as e:
                 log.error("Scanner error: %s", e)
-            log.info("=== Scan done, sleeping %ds ===", FETCH_INTERVAL)
             await asyncio.sleep(FETCH_INTERVAL)
 
 
@@ -234,33 +228,26 @@ async def poster(channel_id: int) -> None:
         item = await q.get()
         channel = bot.get_channel(channel_id)
         if channel is None:
-            log.warning("Channel %d not found", channel_id)
             q.task_done()
             continue
-
         item_id = str(item.get("id", ""))
         item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
         buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
-
         try:
             await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
-            log.info("Posted %s to channel %d", item_id, channel_id)
+            log.info("Posté %s → salon %d", item_id, channel_id)
         except discord.HTTPException as e:
-            log.error("Post failed: %s", e)
-
+            log.error("Erreur post: %s", e)
         q.task_done()
-
         if len(posted) > 10000:
-            overflow = list(posted.keys())[: len(posted) - 10000]
-            for k in overflow:
+            for k in list(posted.keys())[:len(posted) - 10000]:
                 del posted[k]
-
         await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
 
 
 @bot.event
 async def on_ready():
-    log.info("Bot ready as %s", bot.user)
+    log.info("Bot prêt : %s", bot.user)
     bot.loop.create_task(scanner_loop())
     for cid in CHANNEL_IDS:
         bot.loop.create_task(poster(cid))
