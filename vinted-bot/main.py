@@ -20,14 +20,7 @@ VINTED_BASE = "https://www.vinted.fr"
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
 
-CATALOG_WOMEN   = [1]
-CATALOG_MEN     = [4]
-CATALOG_FASHION = [1, 4, 306]
-
-NON_FASHION_IDS = {1187, 1231, 2642, 2643, 2644}
-
-CATALOG_IDS_MEN_SET   = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 204, 208, 214, 215}
-CATALOG_IDS_WOMEN_SET = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
+GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good"}
 
 PREMIUM_BRANDS = [
     "nike", "air jordan", "jordan", "adidas", "yeezy", "puma", "new balance",
@@ -35,7 +28,8 @@ PREMIUM_BRANDS = [
     "ralph lauren", "lacoste", "tommy hilfiger", "hugo boss", "calvin klein",
     "gucci", "louis vuitton", "prada", "balenciaga", "off-white", "supreme",
     "palace", "burberry", "versace", "dior", "givenchy", "fendi", "kenzo",
-    "armani", "moschino", "valentino", "dsquared", "philipp plein",
+    "armani", "moschino", "valentino", "dsquared", "philipp plein", "carhartt",
+    "stussy", "a bathing ape", "bape", "represent", "ami", "acne studios",
 ]
 
 
@@ -46,12 +40,8 @@ def get_price(item: dict) -> float:
     return float(p or 0)
 
 
-def get_catalog_id(item: dict) -> int:
-    return int(item.get("catalog_id") or item.get("category_id") or 0)
-
-
-def is_fashion(item: dict) -> bool:
-    return get_catalog_id(item) not in NON_FASHION_IDS
+def is_good_condition(item: dict) -> bool:
+    return item.get("status", "") in GOOD_CONDITIONS
 
 
 def is_premium_brand(item: dict) -> bool:
@@ -59,36 +49,34 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
-CHANNELS = [
+FETCHES = [
     {
-        "id": 1511054495545557122,
-        "name": "#moins-de-10€",
-        "params": {"catalog_ids": CATALOG_FASHION, "price_to": 9.99, "per_page": 48},
-        "filter": lambda item: is_fashion(item) and get_price(item) < 10,
+        "channel_id": 1511054495545557122,
+        "name": "#alertes-vinted",
+        "params": {"catalog_ids": [4], "per_page": 48},
+        "filter": lambda item: True,
+        "weight": 1,
     },
     {
-        "id": 1511054553083154724,
-        "name": "#10€-20€",
-        "params": {"catalog_ids": CATALOG_FASHION, "price_from": 10, "price_to": 20, "per_page": 48},
-        "filter": lambda item: is_fashion(item) and 10 <= get_price(item) <= 20,
+        "channel_id": 1511054666593472533,
+        "name": "#bonnes-affaires-homme",
+        "params": {"catalog_ids": [4], "price_to": 30, "per_page": 48},
+        "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
+        "weight": 7,
     },
     {
-        "id": 1511054666593472533,
-        "name": "#homme-garcon",
-        "params": {"catalog_ids": CATALOG_MEN, "per_page": 48},
-        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_WOMEN_SET,
+        "channel_id": 1511054666593472533,
+        "name": "#bonnes-affaires-femme",
+        "params": {"catalog_ids": [1], "price_to": 30, "per_page": 48},
+        "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
+        "weight": 3,
     },
     {
-        "id": 1511758434146713892,
-        "name": "#femme-fille",
-        "params": {"catalog_ids": CATALOG_WOMEN, "per_page": 48},
-        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN_SET,
-    },
-    {
-        "id": 1511758714405781744,
+        "channel_id": 1511758434146713892,
         "name": "#marques-premium",
-        "params": {"catalog_ids": CATALOG_FASHION, "price_to": 20, "per_page": 96},
-        "filter": lambda item: is_fashion(item) and get_price(item) <= 20 and is_premium_brand(item),
+        "params": {"catalog_ids": [1, 4, 306], "price_to": 50, "per_page": 96},
+        "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
+        "weight": 1,
     },
 ]
 
@@ -97,31 +85,16 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 post_queue: asyncio.Queue = asyncio.Queue()
 posted: dict[str, set[int]] = {}
+bonnes_affaires_counts = {"homme": 0, "femme": 0}
 
 
 class VintedView(discord.ui.View):
     def __init__(self, item_url: str, buy_url: str):
         super().__init__()
-        self.add_item(discord.ui.Button(
-            label="👁 Voir l'annonce",
-            style=discord.ButtonStyle.link,
-            url=item_url,
-        ))
-        self.add_item(discord.ui.Button(
-            label="🛒 Acheter",
-            style=discord.ButtonStyle.link,
-            url=buy_url,
-        ))
-        self.add_item(discord.ui.Button(
-            label="💬 Faire une offre",
-            style=discord.ButtonStyle.link,
-            url=item_url + "?make_offer=1",
-        ))
-        self.add_item(discord.ui.Button(
-            label="❤️ Favoris",
-            style=discord.ButtonStyle.link,
-            url=item_url + "?add_to_favourites=1",
-        ))
+        self.add_item(discord.ui.Button(label="👁 Voir l'annonce", style=discord.ButtonStyle.link, url=item_url))
+        self.add_item(discord.ui.Button(label="🛒 Acheter", style=discord.ButtonStyle.link, url=buy_url))
+        self.add_item(discord.ui.Button(label="💬 Faire une offre", style=discord.ButtonStyle.link, url=item_url + "?make_offer=1"))
+        self.add_item(discord.ui.Button(label="❤️ Favoris", style=discord.ButtonStyle.link, url=item_url + "?add_to_favourites=1"))
 
 
 def build_embed(item: dict) -> discord.Embed:
@@ -166,10 +139,7 @@ def build_embed(item: dict) -> discord.Embed:
 
 async def get_vinted_session(client: httpx.AsyncClient) -> None:
     try:
-        await client.get(
-            f"{VINTED_BASE}/",
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
-        )
+        await client.get(f"{VINTED_BASE}/", headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
     except Exception as e:
         log.warning("Session init failed: %s", e)
 
@@ -178,7 +148,6 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
     query: dict = {"order": "newest_first", "page": 1}
     catalog_ids = params.pop("catalog_ids", [])
     query.update(params)
-
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/json, text/plain, */*",
@@ -188,7 +157,6 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
     param_str = "&".join(f"{k}={v}" for k, v in query.items())
     if catalog_ids:
         param_str += "&" + "&".join(f"catalog_ids[]={cid}" for cid in catalog_ids)
-
     url = f"{VINTED_BASE}/api/v2/catalog/items?{param_str}"
     try:
         resp = await client.get(url, headers=headers, timeout=15)
@@ -202,14 +170,27 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
         return []
 
 
+def should_include_bonnes_affaires(source: str) -> bool:
+    h = bonnes_affaires_counts["homme"]
+    f = bonnes_affaires_counts["femme"]
+    total = h + f
+    if total == 0:
+        return True
+    if source == "homme":
+        return (h / total) < 0.70
+    else:
+        return (f / total) < 0.30
+
+
 async def fetch_all_channels(client: httpx.AsyncClient) -> None:
     await get_vinted_session(client)
-    for ch_cfg in CHANNELS:
+    for fetch_cfg in FETCHES:
         try:
-            params = dict(ch_cfg["params"])
+            params = dict(fetch_cfg["params"])
             items = await fetch_items(client, params)
-            filter_fn = ch_cfg["filter"]
-            channel_id = ch_cfg["id"]
+            filter_fn = fetch_cfg["filter"]
+            channel_id = fetch_cfg["channel_id"]
+            name = fetch_cfg["name"]
 
             for item in reversed(items):
                 item_id = str(item.get("id", ""))
@@ -221,12 +202,15 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                     continue
                 if not item.get("photos"):
                     continue
+                if "bonnes-affaires" in name:
+                    source = "homme" if "homme" in name else "femme"
+                    if not should_include_bonnes_affaires(source):
+                        continue
+                    bonnes_affaires_counts[source] += 1
                 posted.setdefault(item_id, set()).add(channel_id)
                 await post_queue.put((channel_id, item))
-
         except Exception as e:
-            log.error("Fetcher error for %s: %s", ch_cfg["name"], e)
-
+            log.error("Fetcher error for %s: %s", fetch_cfg["name"], e)
         await asyncio.sleep(random.uniform(8, 15))
 
 
@@ -247,23 +231,18 @@ async def poster() -> None:
         if channel is None:
             post_queue.task_done()
             continue
-
         item_id = str(item.get("id", ""))
         item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
         buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
-
         try:
             await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
         except discord.HTTPException as e:
             log.error("Post failed: %s", e)
-
         post_queue.task_done()
-
-        if len(posted) > 5000:
-            overflow = list(posted.keys())[: len(posted) - 5000]
+        if len(posted) > 8000:
+            overflow = list(posted.keys())[: len(posted) - 8000]
             for k in overflow:
                 del posted[k]
-
         await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
 
 
