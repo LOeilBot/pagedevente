@@ -20,6 +20,7 @@ VINTED_BASE = "https://www.vinted.fr"
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
 
+# catalog_id=5 = Hommes sur vinted.fr (confirmé)
 HOMME_CATALOG_ID = 5
 
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good", "good"}
@@ -36,21 +37,38 @@ PREMIUM_BRANDS = [
     "asics", "salomon", "columbia", "patagonia",
 ]
 
-FEMME_WORDS = [
+BLACKLIST = [
+    # Femme FR
     "femme", "fille", "madame", "dame", "vetements-femmes", "mixte",
     "robe", "jupe", "jupette",
     "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
-    "culotte", "string", "shorty", "bustier", "corset",
-    "crop top", "croptop", "crop-top", "caraco", "tunique",
+    "bustier", "corset", "crop top", "croptop", "crop-top", "caraco", "tunique",
     "maternite", "maternité", "grossesse",
     "bikini", "tankini", "monokini",
     "escarpins", "stiletto", "ballerine",
+    # Femme EN
     "women", "woman", "girl", "girls", "ladies", "lady",
-    "women's", "womens", "dress", "skirt", "bra ", " bra",
-    "maternity", "heels",
+    "women's", "womens", "dress", "skirt", "bra ", " bra", "maternity", "heels",
+    # Femme DE
     "damen", "frau", "frauen", "kleid", "kleider",
+    # Femme IT
     "donna", "donne", "ragazza", "vestito", "gonna", "reggiseno",
+    # Femme ES/PT
     "mujer", "mujeres", "chica", "vestido", "falda", "mulher", "saia",
+    # Accessoires / objets à exclure
+    "calecon", "caleçon", "culotte", "string", "shorty", "slip",
+    "chaussette", "chaussettes", "socken", "socks",
+    "ceinture", "belt", "cinturon", "cintura",
+    "montre", "watch", "orologio", "uhr", "reloj",
+    "cravate", "tie ", " tie", "corbata", "krawatte",
+    "lunette", "lunettes", "glasses", "sunglasses", "occhiali", "brille", "gafas",
+    "bijou", "bijoux", "collier", "bracelet", "bague", "boucle d'oreille",
+    "jewelry", "necklace", "earring", "ring ", " ring",
+    "chapeau", "casquette", "bonnet", "hat ", " hat",
+    "sac ", " sac", "bag ", " bag", "backpack", "pochette",
+    "portefeuille", "wallet",
+    "parfum", "perfume", "cologne",
+    "peluche", "jouet", "toy",
 ]
 
 CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
@@ -85,7 +103,7 @@ def not_femme(item: dict) -> bool:
         item.get("description", "") + " " +
         item.get("url", "")
     ).lower()
-    return not any(w in text for w in FEMME_WORDS)
+    return not any(w in text for w in BLACKLIST)
 
 
 intents = discord.Intents.default()
@@ -172,8 +190,8 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
         {
             "channel_id": 1512096461930627142,
             "name": "#alertes-vinted",
-            "extra": "",
-            "filter": lambda item: not_femme(item),
+            "extra": "&price_to=50",
+            "filter": lambda item: not_femme(item) and get_price(item) <= 50,
         },
         {
             "channel_id": 1512096568818270299,
