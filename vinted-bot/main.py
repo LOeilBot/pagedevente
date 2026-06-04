@@ -19,8 +19,11 @@ VINTED_BASE = "https://www.vinted.fr"
 
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
+MAX_WOMEN_RATIO = 0.20
 
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good"}
+
+CATALOG_IDS_WOMEN = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
 
 PREMIUM_BRANDS = [
     "nike", "air jordan", "jordan", "adidas", "yeezy", "puma", "new balance",
@@ -29,7 +32,7 @@ PREMIUM_BRANDS = [
     "gucci", "louis vuitton", "prada", "balenciaga", "off-white", "supreme",
     "palace", "burberry", "versace", "dior", "givenchy", "fendi", "kenzo",
     "armani", "moschino", "valentino", "dsquared", "philipp plein", "carhartt",
-    "stussy", "a bathing ape", "bape", "represent", "ami", "acne studios",
+    "stussy", "bape", "represent", "ami", "acne studios",
 ]
 
 
@@ -49,43 +52,80 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
+def is_women_item(item: dict) -> bool:
+    return int(item.get("catalog_id") or item.get("category_id") or 0) in CATALOG_IDS_WOMEN
+
+
+channel_counts: dict[int, dict] = {
+    1511054495545557122: {"homme": 0, "femme": 0},
+    1511054666593472533: {"homme": 0, "femme": 0},
+    1511758434146713892: {"homme": 0, "femme": 0},
+}
+
+
+def can_post_item(channel_id: int, item: dict) -> bool:
+    counts = channel_counts[channel_id]
+    if not is_women_item(item):
+        return True
+    total = counts["homme"] + counts["femme"]
+    if total == 0:
+        return True
+    return (counts["femme"] / total) < MAX_WOMEN_RATIO
+
+
+def record_post(channel_id: int, item: dict) -> None:
+    counts = channel_counts[channel_id]
+    if is_women_item(item):
+        counts["femme"] += 1
+    else:
+        counts["homme"] += 1
+
+
 FETCHES = [
     {
         "channel_id": 1511054495545557122,
         "name": "#alertes-vinted",
         "params": {"catalog_ids": [4], "per_page": 48},
         "filter": lambda item: True,
-        "weight": 1,
+    },
+    {
+        "channel_id": 1511054495545557122,
+        "name": "#alertes-vinted-femme",
+        "params": {"catalog_ids": [1], "per_page": 24},
+        "filter": lambda item: True,
     },
     {
         "channel_id": 1511054666593472533,
         "name": "#bonnes-affaires-homme",
         "params": {"catalog_ids": [4], "price_to": 30, "per_page": 48},
         "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
-        "weight": 7,
     },
     {
         "channel_id": 1511054666593472533,
         "name": "#bonnes-affaires-femme",
-        "params": {"catalog_ids": [1], "price_to": 30, "per_page": 48},
+        "params": {"catalog_ids": [1], "price_to": 30, "per_page": 24},
         "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
-        "weight": 3,
     },
     {
         "channel_id": 1511758434146713892,
-        "name": "#marques-premium",
-        "params": {"catalog_ids": [1, 4, 306], "price_to": 50, "per_page": 96},
+        "name": "#marques-premium-homme",
+        "params": {"catalog_ids": [4], "price_to": 50, "per_page": 48},
         "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
-        "weight": 1,
+    },
+    {
+        "channel_id": 1511758434146713892,
+        "name": "#marques-premium-femme",
+        "params": {"catalog_ids": [1], "price_to": 50, "per_page": 24},
+        "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
     },
 ]
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-post_queue: asyncio.Queue = asyncio.Queue()
+CHANNEL_IDS = [1511054495545557122, 1511054666593472533, 1511758434146713892]
+queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
-bonnes_affaires_counts = {"homme": 0, "femme": 0}
 
 
 class VintedView(discord.ui.View):
@@ -170,18 +210,6 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
         return []
 
 
-def should_include_bonnes_affaires(source: str) -> bool:
-    h = bonnes_affaires_counts["homme"]
-    f = bonnes_affaires_counts["femme"]
-    total = h + f
-    if total == 0:
-        return True
-    if source == "homme":
-        return (h / total) < 0.70
-    else:
-        return (f / total) < 0.30
-
-
 async def fetch_all_channels(client: httpx.AsyncClient) -> None:
     await get_vinted_session(client)
     for fetch_cfg in FETCHES:
@@ -190,7 +218,6 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
             items = await fetch_items(client, params)
             filter_fn = fetch_cfg["filter"]
             channel_id = fetch_cfg["channel_id"]
-            name = fetch_cfg["name"]
 
             for item in reversed(items):
                 item_id = str(item.get("id", ""))
@@ -202,13 +229,11 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                     continue
                 if not item.get("photos"):
                     continue
-                if "bonnes-affaires" in name:
-                    source = "homme" if "homme" in name else "femme"
-                    if not should_include_bonnes_affaires(source):
-                        continue
-                    bonnes_affaires_counts[source] += 1
+                if not can_post_item(channel_id, item):
+                    continue
+                record_post(channel_id, item)
                 posted.setdefault(item_id, set()).add(channel_id)
-                await post_queue.put((channel_id, item))
+                await queues[channel_id].put(item)
         except Exception as e:
             log.error("Fetcher error for %s: %s", fetch_cfg["name"], e)
         await asyncio.sleep(random.uniform(8, 15))
@@ -224,12 +249,13 @@ async def scanner_loop() -> None:
             await asyncio.sleep(FETCH_INTERVAL)
 
 
-async def poster() -> None:
+async def poster(channel_id: int) -> None:
+    q = queues[channel_id]
     while True:
-        channel_id, item = await post_queue.get()
+        item = await q.get()
         channel = bot.get_channel(channel_id)
         if channel is None:
-            post_queue.task_done()
+            q.task_done()
             continue
         item_id = str(item.get("id", ""))
         item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
@@ -238,7 +264,7 @@ async def poster() -> None:
             await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
         except discord.HTTPException as e:
             log.error("Post failed: %s", e)
-        post_queue.task_done()
+        q.task_done()
         if len(posted) > 8000:
             overflow = list(posted.keys())[: len(posted) - 8000]
             for k in overflow:
@@ -250,7 +276,8 @@ async def poster() -> None:
 async def on_ready():
     log.info("Vinted bot ready as %s", bot.user)
     bot.loop.create_task(scanner_loop())
-    bot.loop.create_task(poster())
+    for cid in CHANNEL_IDS:
+        bot.loop.create_task(poster(cid))
 
 
 if __name__ == "__main__":
