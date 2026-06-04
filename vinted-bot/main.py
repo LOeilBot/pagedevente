@@ -5,7 +5,7 @@ import random
 from datetime import datetime, timezone
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import httpx
 from dotenv import load_dotenv
 
@@ -20,8 +20,15 @@ VINTED_BASE = "https://www.vinted.fr"
 POST_DELAY = 2.5
 FETCH_INTERVAL = 60
 
-CATALOG_IDS_MEN   = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 204, 208, 214, 215}
-CATALOG_IDS_WOMEN = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
+CATALOG_WOMEN   = [1]
+CATALOG_MEN     = [4]
+CATALOG_KIDS    = [306]
+CATALOG_FASHION = [1, 4, 306]
+
+NON_FASHION_IDS = {1187, 1231, 2642, 2643, 2644}
+
+CATALOG_IDS_MEN_SET   = {4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 204, 208, 214, 215}
+CATALOG_IDS_WOMEN_SET = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
 
 PREMIUM_BRANDS = [
     "nike", "air jordan", "jordan", "adidas", "yeezy", "puma", "new balance",
@@ -44,45 +51,45 @@ def get_catalog_id(item: dict) -> int:
     return int(item.get("catalog_id") or item.get("category_id") or 0)
 
 
+def is_fashion(item: dict) -> bool:
+    return get_catalog_id(item) not in NON_FASHION_IDS
+
+
+def is_premium_brand(item: dict) -> bool:
+    text = (item.get("title", "") + " " + item.get("brand_title", "")).lower()
+    return any(brand in text for brand in PREMIUM_BRANDS)
+
+
 CHANNELS = [
     {
         "id": 1511054495545557122,
         "name": "#moins-de-10€",
-        "params": {"price_to": 9.99, "per_page": 48},
-        "filter": lambda item: get_price(item) < 10,
+        "params": {"catalog_ids": CATALOG_FASHION, "price_to": 9.99, "per_page": 48},
+        "filter": lambda item: is_fashion(item) and get_price(item) < 10,
     },
     {
         "id": 1511054553083154724,
         "name": "#10€-20€",
-        "params": {"price_from": 10, "price_to": 20, "per_page": 48},
-        "filter": lambda item: 10 <= get_price(item) <= 20,
+        "params": {"catalog_ids": CATALOG_FASHION, "price_from": 10, "price_to": 20, "per_page": 48},
+        "filter": lambda item: is_fashion(item) and 10 <= get_price(item) <= 20,
     },
     {
         "id": 1511054666593472533,
         "name": "#homme-garcon",
-        "params": {"catalog_ids": [4], "per_page": 48},
-        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_WOMEN,
+        "params": {"catalog_ids": CATALOG_MEN, "per_page": 48},
+        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_WOMEN_SET,
     },
     {
         "id": 1511758434146713892,
         "name": "#femme-fille",
-        "params": {"catalog_ids": [1], "per_page": 48},
-        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN,
-    },
-    {
-        "id": 1511758632243691820,
-        "name": "#autres",
-        "params": {"catalog_ids": [306, 1187, 1231, 2642], "per_page": 48},
-        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN | CATALOG_IDS_WOMEN,
+        "params": {"catalog_ids": CATALOG_WOMEN, "per_page": 48},
+        "filter": lambda item: get_catalog_id(item) not in CATALOG_IDS_MEN_SET,
     },
     {
         "id": 1511758714405781744,
         "name": "#marques-premium",
-        "params": {"per_page": 96},
-        "filter": lambda item: any(
-            brand in (item.get("title", "") + " " + item.get("brand_title", "")).lower()
-            for brand in PREMIUM_BRANDS
-        ),
+        "params": {"catalog_ids": CATALOG_FASHION, "price_to": 20, "per_page": 96},
+        "filter": lambda item: is_fashion(item) and get_price(item) <= 20 and is_premium_brand(item),
     },
 ]
 
