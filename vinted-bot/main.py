@@ -35,7 +35,7 @@ PREMIUM_BRANDS = [
 ]
 
 FEMME_WORDS = [
-    "femme", "fille", "madame", "dame", "vetements-femmes",
+    "femme", "fille", "madame", "dame", "vetements-femmes", "mixte",
     "robe", "jupe", "jupette",
     "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
     "culotte", "string", "shorty", "bustier", "corset",
@@ -172,8 +172,8 @@ async def find_homme_catalog_id(client: httpx.AsyncClient) -> int:
             await asyncio.sleep(2)
         except Exception as e:
             log.warning("Test catalog %d failed: %s", cid, e)
-    log.warning("catalog Hommes non trouvé, fallback ID=4")
-    return 4
+    log.warning("catalog Hommes non trouvé, fallback ID=5")
+    return 5
 
 
 async def fetch_items(client: httpx.AsyncClient, catalog_id: int, extra_params: str = "") -> list[dict]:
@@ -194,7 +194,6 @@ async def fetch_items(client: httpx.AsyncClient, catalog_id: int, extra_params: 
 
 async def fetch_all_channels(client: httpx.AsyncClient, homme_id: int) -> None:
     await get_vinted_session(client)
-
     fetches = [
         {
             "channel_id": 1512096461930627142,
@@ -215,7 +214,6 @@ async def fetch_all_channels(client: httpx.AsyncClient, homme_id: int) -> None:
             "filter": lambda item: (is_homme_url(item) or not_femme(item)) and get_price(item) <= 50 and is_premium_brand(item),
         },
     ]
-
     for fetch_cfg in fetches:
         try:
             items = await fetch_items(client, homme_id, fetch_cfg["extra"])
