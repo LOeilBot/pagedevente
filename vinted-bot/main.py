@@ -34,52 +34,31 @@ PREMIUM_BRANDS = [
     "asics", "salomon", "columbia", "patagonia",
 ]
 
-# ── Français
-FEMME_FR = [
-    "femme", "fille", "madame", "dame",
-    "pour femme", "pour fille", "vetements-femmes",
-    "robe", "jupette", "jupe",
-    "soutien-gorge", "soutien gorge", "soutiengorge",
-    "brassiere", "lingerie", "culotte", "string", "shorty", "bustier", "corset",
-    "crop top", "croptop", "crop-top", "caraco", "tunique", "blouse",
-    "maternite", "maternité", "grossesse", "allaitement",
+FEMME_WORDS = [
+    "femme", "fille", "madame", "dame", "vetements-femmes",
+    "robe", "jupe", "jupette",
+    "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
+    "culotte", "string", "shorty", "bustier", "corset",
+    "crop top", "croptop", "crop-top", "caraco", "tunique",
+    "maternite", "maternité", "grossesse",
     "bikini", "tankini", "monokini",
-    "escarpins", "escarpin", "stiletto", "ballerine", "ballerines",
-    "sac a main", "sac à main",
-]
-
-# ── Anglais
-FEMME_EN = [
+    "escarpins", "stiletto", "ballerine",
     "women", "woman", "girl", "girls", "ladies", "lady",
-    "women's", "womens",
-    "dress", "skirt", "bra", "bras", "legging", "leggings",
-    "blouse", "bikini", "lingerie", "maternity",
-    "heels", "stiletto",
+    "women's", "womens", "dress", "skirt", "bra ", " bra",
+    "maternity", "heels",
+    "damen", "frau", "frauen", "kleid", "kleider",
+    "donna", "donne", "ragazza", "vestito", "gonna", "reggiseno",
+    "mujer", "mujeres", "chica", "vestido", "falda", "mulher", "saia",
 ]
 
-# ── Allemand
-FEMME_DE = [
-    "damen", "dame", "frau", "frauen", "madchen",
-    "kleid", "kleider", "rock ",
-    "bh ", " bh",
-    "leggings damen", "bluse",
-]
+CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
 
-# ── Italien
-FEMME_IT = [
-    "donna", "donne", "ragazza", "ragazze",
-    "vestito", "gonna", "reggiseno",
-    "intimo donna", "lingerie donna",
-]
-
-# ── Espagnol / Portugais
-FEMME_ES_PT = [
-    "mujer", "mujeres", "chica", "chicas",
-    "vestido", "falda",
-    "mulher", "saia",
-]
-
-FEMME_ALL = FEMME_FR + FEMME_EN + FEMME_DE + FEMME_IT + FEMME_ES_PT
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "fr-FR,fr;q=0.9",
+    "Referer": f"{VINTED_BASE}/",
+}
 
 
 def get_price(item: dict) -> float:
@@ -104,31 +83,13 @@ def not_femme(item: dict) -> bool:
         item.get("description", "") + " " +
         item.get("url", "")
     ).lower()
-    return not any(w in text for w in FEMME_ALL)
+    return not any(w in text for w in FEMME_WORDS)
 
 
-CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
+def is_homme_url(item: dict) -> bool:
+    url = item.get("url", "").lower()
+    return "hommes" in url or "homme" in url
 
-FETCHES = [
-    {
-        "channel_id": 1512096461930627142,
-        "name": "#alertes-vinted",
-        "params": {"catalog_ids": [4], "per_page": 96},
-        "filter": lambda item: not_femme(item),
-    },
-    {
-        "channel_id": 1512096568818270299,
-        "name": "#bonnes-affaires",
-        "params": {"catalog_ids": [4], "price_to": 30, "per_page": 96},
-        "filter": lambda item: not_femme(item) and get_price(item) <= 30 and is_good_condition(item),
-    },
-    {
-        "channel_id": 1512096652570267658,
-        "name": "#marques-premium",
-        "params": {"catalog_ids": [4], "price_to": 50, "per_page": 96},
-        "filter": lambda item: not_femme(item) and get_price(item) <= 50 and is_premium_brand(item),
-    },
-]
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -185,14 +146,6 @@ def build_embed(item: dict) -> discord.Embed:
     return embed
 
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "fr-FR,fr;q=0.9",
-    "Referer": f"{VINTED_BASE}/",
-}
-
-
 async def get_vinted_session(client: httpx.AsyncClient) -> None:
     try:
         await client.get(f"{VINTED_BASE}/", headers=HEADERS)
@@ -200,14 +153,31 @@ async def get_vinted_session(client: httpx.AsyncClient) -> None:
         log.warning("Session init failed: %s", e)
 
 
-async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
-    query: dict = {"order": "newest_first", "page": 1}
-    catalog_ids = params.pop("catalog_ids", [])
-    query.update(params)
-    param_str = "&".join(f"{k}={v}" for k, v in query.items())
-    if catalog_ids:
-        param_str += "&" + "&".join(f"catalog_ids[]={cid}" for cid in catalog_ids)
-    url = f"{VINTED_BASE}/api/v2/catalog/items?{param_str}"
+async def find_homme_catalog_id(client: httpx.AsyncClient) -> int:
+    await get_vinted_session(client)
+    for cid in range(1, 21):
+        try:
+            url = f"{VINTED_BASE}/api/v2/catalog/items?order=newest_first&page=1&per_page=3&catalog_ids[]={cid}"
+            resp = await client.get(url, headers=HEADERS, timeout=10)
+            if resp.status_code != 200:
+                continue
+            items = resp.json().get("items", [])
+            if not items:
+                continue
+            item_url = items[0].get("url", "").lower()
+            log.info("catalog_id=%d → URL: %s", cid, item_url[:60])
+            if "hommes" in item_url or "homme" in item_url:
+                log.info("✅ Trouvé catalog Hommes: ID=%d", cid)
+                return cid
+            await asyncio.sleep(2)
+        except Exception as e:
+            log.warning("Test catalog %d failed: %s", cid, e)
+    log.warning("catalog Hommes non trouvé, fallback ID=4")
+    return 4
+
+
+async def fetch_items(client: httpx.AsyncClient, catalog_id: int, extra_params: str = "") -> list[dict]:
+    url = f"{VINTED_BASE}/api/v2/catalog/items?order=newest_first&page=1&per_page=96&catalog_ids[]={catalog_id}{extra_params}"
     try:
         resp = await client.get(url, headers=HEADERS, timeout=15)
         if resp.status_code == 401:
@@ -215,19 +185,40 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
             resp = await client.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
         items = resp.json().get("items", [])
-        log.info("Fetched %d items — %s", len(items), url[:90])
+        log.info("Fetched %d items (catalog %d)", len(items), catalog_id)
         return items
     except Exception as e:
         log.error("Fetch error: %s", e)
         return []
 
 
-async def fetch_all_channels(client: httpx.AsyncClient) -> None:
+async def fetch_all_channels(client: httpx.AsyncClient, homme_id: int) -> None:
     await get_vinted_session(client)
-    for fetch_cfg in FETCHES:
+
+    fetches = [
+        {
+            "channel_id": 1512096461930627142,
+            "name": "#alertes-vinted",
+            "extra": "",
+            "filter": lambda item: is_homme_url(item) or not_femme(item),
+        },
+        {
+            "channel_id": 1512096568818270299,
+            "name": "#bonnes-affaires",
+            "extra": "&price_to=30",
+            "filter": lambda item: (is_homme_url(item) or not_femme(item)) and get_price(item) <= 30 and is_good_condition(item),
+        },
+        {
+            "channel_id": 1512096652570267658,
+            "name": "#marques-premium",
+            "extra": "&price_to=50",
+            "filter": lambda item: (is_homme_url(item) or not_femme(item)) and get_price(item) <= 50 and is_premium_brand(item),
+        },
+    ]
+
+    for fetch_cfg in fetches:
         try:
-            params = dict(fetch_cfg["params"])
-            items = await fetch_items(client, params)
+            items = await fetch_items(client, homme_id, fetch_cfg["extra"])
             channel_id = fetch_cfg["channel_id"]
             filter_fn = fetch_cfg["filter"]
             queued = 0
@@ -250,12 +241,12 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
         await asyncio.sleep(random.uniform(8, 15))
 
 
-async def scanner_loop() -> None:
+async def scanner_loop(homme_id: int) -> None:
     async with httpx.AsyncClient(follow_redirects=True) as client:
         while True:
-            log.info("=== Scan Vinted ===")
+            log.info("=== Scan Vinted (catalog Hommes ID=%d) ===", homme_id)
             try:
-                await fetch_all_channels(client)
+                await fetch_all_channels(client, homme_id)
             except Exception as e:
                 log.error("Scanner error: %s", e)
             await asyncio.sleep(FETCH_INTERVAL)
@@ -287,7 +278,9 @@ async def poster(channel_id: int) -> None:
 @bot.event
 async def on_ready():
     log.info("Bot prêt : %s", bot.user)
-    bot.loop.create_task(scanner_loop())
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        homme_id = await find_homme_catalog_id(client)
+    bot.loop.create_task(scanner_loop(homme_id))
     for cid in CHANNEL_IDS:
         bot.loop.create_task(poster(cid))
 
