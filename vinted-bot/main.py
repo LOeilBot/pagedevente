@@ -37,7 +37,6 @@ PREMIUM_BRANDS = [
 ]
 
 BLACKLIST = [
-    # Femme FR
     "femme", "fille", "madame", "dame", "vetements-femmes", "mixte",
     "robe", "jupe", "jupette",
     "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
@@ -45,16 +44,11 @@ BLACKLIST = [
     "maternite", "maternité", "grossesse",
     "bikini", "tankini", "monokini",
     "escarpins", "stiletto", "ballerine",
-    # Femme EN
     "women", "woman", "girl", "girls", "ladies", "lady",
     "women's", "womens", "dress", "skirt", "bra ", " bra", "maternity", "heels",
-    # Femme DE
     "damen", "frau", "frauen", "kleid", "kleider",
-    # Femme IT
     "donna", "donne", "ragazza", "vestito", "gonna", "reggiseno",
-    # Femme ES/PT
     "mujer", "mujeres", "chica", "vestido", "falda", "mulher", "saia",
-    # Accessoires / objets à exclure
     "calecon", "caleçon", "culotte", "string", "shorty", "slip",
     "chaussette", "chaussettes", "socken", "socks",
     "ceinture", "belt", "cinturon", "cintura",
@@ -118,7 +112,6 @@ class VintedView(discord.ui.View):
     def __init__(self, item_url: str, buy_url: str):
         super().__init__()
         self.add_item(discord.ui.Button(label="👁 Voir l'annonce", style=discord.ButtonStyle.link, url=item_url))
-        self.add_item(discord.ui.Button(label="💬 Contacter le vendeur", style=discord.ButtonStyle.link, url=item_url + "/want_to_buy"))
 
 
 def build_embed(item: dict) -> discord.Embed:
