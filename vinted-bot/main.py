@@ -140,27 +140,25 @@ def build_embed(item: dict) -> discord.Embed:
     photo_url = photos[0].get("url", "") if photos else ""
 
     condition_map = {
-        "new_with_tags":    ("Neuf avec étiquettes", 0x2ECC71),
-        "new_without_tags": ("Neuf sans étiquettes", 0x27AE60),
-        "very_good":        ("Très bon état",        0x3498DB),
-        "good":             ("Bon état",             0xF39C12),
-        "satisfactory":     ("État satisfaisant",    0xE67E22),
+        "new_with_tags":    ("✨ Neuf avec étiquettes", 0x2ECC71),
+        "new_without_tags": ("✨ Neuf sans étiquettes", 0x27AE60),
+        "very_good":        ("👍 Très bon état",        0x3498DB),
+        "good":             ("👌 Bon état",             0xF39C12),
+        "satisfactory":     ("🔸 État satisfaisant",    0xE67E22),
     }
     condition_label, color = condition_map.get(condition, (condition, 0x95A5A6))
 
-    lines = [f"** {price} {currency}**"]
-    if size:
-        lines.append(f"📐 **Taille :** {size}")
-    if condition_label:
-        lines.append(f"🏷 **État :** {condition_label}")
+    embed = discord.Embed(title=f"🛍️ {title}", color=color)
+    embed.add_field(name="💰 Prix", value=f"**{price} {currency}**", inline=True)
     if brand:
-        lines.append(f"✦ **Marque :** {brand}")
-
-    embed = discord.Embed(description="\n".join(lines), color=color)
-    embed.set_author(name=title)
+        embed.add_field(name="🏷️ Marque", value=f"**{brand}**", inline=True)
+    if size:
+        embed.add_field(name="📏 Taille", value=size, inline=True)
+    if condition_label:
+        embed.add_field(name="✨ État", value=condition_label, inline=False)
     if photo_url:
         embed.set_image(url=photo_url)
-    embed.set_footer(text=f"Vinted  •  {brand}" if brand else "Vinted")
+    embed.set_footer(text=f"Vinted • {brand}" if brand else "Vinted", icon_url="https://www.vinted.fr/favicon.ico")
     embed.timestamp = datetime.now(timezone.utc)
     return embed
 
