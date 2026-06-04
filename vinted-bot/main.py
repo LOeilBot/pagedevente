@@ -19,11 +19,8 @@ VINTED_BASE = "https://www.vinted.fr"
 
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
-MAX_WOMEN_RATIO = 0.20
 
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good"}
-
-CATALOG_IDS_WOMEN = {1, 2, 3, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
 
 PREMIUM_BRANDS = [
     "nike", "air jordan", "jordan", "adidas", "yeezy", "puma", "new balance",
@@ -32,7 +29,9 @@ PREMIUM_BRANDS = [
     "gucci", "louis vuitton", "prada", "balenciaga", "off-white", "supreme",
     "palace", "burberry", "versace", "dior", "givenchy", "fendi", "kenzo",
     "armani", "moschino", "valentino", "dsquared", "philipp plein", "carhartt",
-    "stussy", "bape", "represent", "ami", "acne studios",
+    "stussy", "bape", "represent", "ami", "acne studios", "levi", "levis",
+    "champion", "polo", "fred perry", "timberland", "vans", "converse", "reebok",
+    "asics", "salomon", "arc'teryx", "patagonia", "columbia",
 ]
 
 
@@ -52,69 +51,69 @@ def is_premium_brand(item: dict) -> bool:
     return any(brand in text for brand in PREMIUM_BRANDS)
 
 
-def is_women_item(item: dict) -> bool:
-    return int(item.get("catalog_id") or item.get("category_id") or 0) in CATALOG_IDS_WOMEN
+CHANNEL_IDS = [1512096461930627142, 1512096568818270299, 1512096652570267658]
+
+channel_counts: dict[int, dict] = {cid: {"h": 0, "f": 0} for cid in CHANNEL_IDS}
 
 
-channel_counts: dict[int, dict] = {
-    1511054495545557122: {"homme": 0, "femme": 0},
-    1511054666593472533: {"homme": 0, "femme": 0},
-    1511758434146713892: {"homme": 0, "femme": 0},
-}
-
-
-def can_post_item(channel_id: int, item: dict) -> bool:
-    counts = channel_counts[channel_id]
-    if not is_women_item(item):
+def can_post(channel_id: int, is_femme: bool) -> bool:
+    if not is_femme:
         return True
-    total = counts["homme"] + counts["femme"]
+    c = channel_counts[channel_id]
+    total = c["h"] + c["f"]
     if total == 0:
         return True
-    return (counts["femme"] / total) < MAX_WOMEN_RATIO
+    return c["f"] / total < 0.20
 
 
-def record_post(channel_id: int, item: dict) -> None:
-    counts = channel_counts[channel_id]
-    if is_women_item(item):
-        counts["femme"] += 1
+def record(channel_id: int, is_femme: bool) -> None:
+    c = channel_counts[channel_id]
+    if is_femme:
+        c["f"] += 1
     else:
-        counts["homme"] += 1
+        c["h"] += 1
 
 
 FETCHES = [
     {
-        "channel_id": 1511054495545557122,
-        "name": "#alertes-vinted",
-        "params": {"catalog_ids": [4], "per_page": 48},
+        "channel_id": 1512096461930627142,
+        "label": "🔵 HOMME",
+        "is_femme": False,
+        "params": {"catalog_ids": [4], "per_page": 96},
         "filter": lambda item: True,
     },
     {
-        "channel_id": 1511054495545557122,
-        "name": "#alertes-vinted-femme",
+        "channel_id": 1512096461930627142,
+        "label": "🔴 FEMME",
+        "is_femme": True,
         "params": {"catalog_ids": [1], "per_page": 24},
         "filter": lambda item: True,
     },
     {
-        "channel_id": 1511054666593472533,
-        "name": "#bonnes-affaires-homme",
-        "params": {"catalog_ids": [4], "price_to": 30, "per_page": 48},
+        "channel_id": 1512096568818270299,
+        "label": "🔵 HOMME",
+        "is_femme": False,
+        "params": {"catalog_ids": [4], "price_to": 30, "per_page": 96},
         "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
     },
     {
-        "channel_id": 1511054666593472533,
-        "name": "#bonnes-affaires-femme",
+        "channel_id": 1512096568818270299,
+        "label": "🔴 FEMME",
+        "is_femme": True,
         "params": {"catalog_ids": [1], "price_to": 30, "per_page": 24},
         "filter": lambda item: get_price(item) <= 30 and is_good_condition(item),
     },
     {
-        "channel_id": 1511758434146713892,
-        "name": "#marques-premium-homme",
-        "params": {"catalog_ids": [4], "price_to": 50, "per_page": 48},
+        "channel_id": 1512096652570267658,
+        "label": "🔵 HOMME",
+        "is_femme": False,
+        "params": {"catalog_ids": [4], "price_to": 50, "per_page": 96},
         "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
     },
     {
-        "channel_id": 1511758434146713892,
-        "name": "#marques-premium-femme",
+        "channel_id": 1512096652570267658,
+        "label": "🔴 FEMME",
+        "is_femme": True,
         "params": {"catalog_ids": [1], "price_to": 50, "per_page": 24},
         "filter": lambda item: get_price(item) <= 50 and is_premium_brand(item),
     },
@@ -123,7 +122,6 @@ FETCHES = [
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-CHANNEL_IDS = [1511054495545557122, 1511054666593472533, 1511758434146713892]
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
 
@@ -137,7 +135,7 @@ class VintedView(discord.ui.View):
         self.add_item(discord.ui.Button(label="❤️ Favoris", style=discord.ButtonStyle.link, url=item_url + "?add_to_favourites=1"))
 
 
-def build_embed(item: dict) -> discord.Embed:
+def build_embed(item: dict, label: str) -> discord.Embed:
     raw_price = item.get("price", {})
     if isinstance(raw_price, dict):
         price = raw_price.get("amount", "?")
@@ -154,15 +152,15 @@ def build_embed(item: dict) -> discord.Embed:
     photo_url = photos[0].get("url", "") if photos else ""
 
     conditions = {
-        "new_with_tags": "Neuf avec étiquettes",
-        "new_without_tags": "Neuf sans étiquettes",
-        "very_good": "Très bon état",
+        "new_with_tags": "Neuf avec étiquettes ✨",
+        "new_without_tags": "Neuf sans étiquettes ✨",
+        "very_good": "Très bon état 👍",
         "good": "Bon état",
         "satisfactory": "État satisfaisant",
     }
     condition_label = conditions.get(condition, condition)
 
-    embed = discord.Embed(title=title, color=0x09B1BA)
+    embed = discord.Embed(title=title, color=0x1E90FF if "HOMME" in label else 0xFF69B4)
     embed.add_field(name="💰 Prix", value=f"**{price} {currency}**", inline=True)
     if brand:
         embed.add_field(name="🏷️ Marque", value=brand, inline=True)
@@ -172,14 +170,17 @@ def build_embed(item: dict) -> discord.Embed:
         embed.add_field(name="✨ État", value=condition_label, inline=True)
     if photo_url:
         embed.set_image(url=photo_url)
-    embed.set_footer(text="Vinted • Nouvelle annonce")
+    embed.set_footer(text=f"Vinted • {label}")
     embed.timestamp = datetime.now(timezone.utc)
     return embed
 
 
 async def get_vinted_session(client: httpx.AsyncClient) -> None:
     try:
-        await client.get(f"{VINTED_BASE}/", headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"})
+        await client.get(
+            f"{VINTED_BASE}/",
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"},
+        )
     except Exception as e:
         log.warning("Session init failed: %s", e)
 
@@ -204,7 +205,9 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
             await get_vinted_session(client)
             resp = await client.get(url, headers=headers, timeout=15)
         resp.raise_for_status()
-        return resp.json().get("items", [])
+        items = resp.json().get("items", [])
+        log.info("Fetched %d items from %s", len(items), url[:80])
+        return items
     except Exception as e:
         log.error("Fetch error: %s", e)
         return []
@@ -216,8 +219,11 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
         try:
             params = dict(fetch_cfg["params"])
             items = await fetch_items(client, params)
-            filter_fn = fetch_cfg["filter"]
             channel_id = fetch_cfg["channel_id"]
+            is_femme = fetch_cfg["is_femme"]
+            label = fetch_cfg["label"]
+            filter_fn = fetch_cfg["filter"]
+            queued = 0
 
             for item in reversed(items):
                 item_id = str(item.get("id", ""))
@@ -229,23 +235,31 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                     continue
                 if not item.get("photos"):
                     continue
-                if not can_post_item(channel_id, item):
+                if not can_post(channel_id, is_femme):
                     continue
-                record_post(channel_id, item)
+                record(channel_id, is_femme)
                 posted.setdefault(item_id, set()).add(channel_id)
+                item["_label"] = label
                 await queues[channel_id].put(item)
+                queued += 1
+
+            log.info("  → %s [%s]: %d items queued", fetch_cfg["channel_id"], label, queued)
+
         except Exception as e:
-            log.error("Fetcher error for %s: %s", fetch_cfg["name"], e)
+            log.error("Fetcher error for %s: %s", fetch_cfg["label"], e)
+
         await asyncio.sleep(random.uniform(8, 15))
 
 
 async def scanner_loop() -> None:
     async with httpx.AsyncClient(follow_redirects=True) as client:
         while True:
+            log.info("=== Scanning Vinted ===")
             try:
                 await fetch_all_channels(client)
             except Exception as e:
                 log.error("Scanner error: %s", e)
+            log.info("=== Scan done, sleeping %ds ===", FETCH_INTERVAL)
             await asyncio.sleep(FETCH_INTERVAL)
 
 
@@ -255,26 +269,34 @@ async def poster(channel_id: int) -> None:
         item = await q.get()
         channel = bot.get_channel(channel_id)
         if channel is None:
+            log.warning("Channel %d not found", channel_id)
             q.task_done()
             continue
+
         item_id = str(item.get("id", ""))
         item_url = item.get("url", f"{VINTED_BASE}/items/{item_id}")
         buy_url = f"{VINTED_BASE}/items/{item_id}/buy"
+        label = item.get("_label", "Vinted")
+
         try:
-            await channel.send(embed=build_embed(item), view=VintedView(item_url, buy_url))
+            await channel.send(embed=build_embed(item, label), view=VintedView(item_url, buy_url))
+            log.info("Posted item %s to channel %d [%s]", item_id, channel_id, label)
         except discord.HTTPException as e:
             log.error("Post failed: %s", e)
+
         q.task_done()
-        if len(posted) > 8000:
-            overflow = list(posted.keys())[: len(posted) - 8000]
+
+        if len(posted) > 10000:
+            overflow = list(posted.keys())[: len(posted) - 10000]
             for k in overflow:
                 del posted[k]
+
         await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
 
 
 @bot.event
 async def on_ready():
-    log.info("Vinted bot ready as %s", bot.user)
+    log.info("Bot ready as %s", bot.user)
     bot.loop.create_task(scanner_loop())
     for cid in CHANNEL_IDS:
         bot.loop.create_task(poster(cid))
