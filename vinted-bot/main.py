@@ -17,12 +17,11 @@ log = logging.getLogger(__name__)
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
 VINTED_BASE = "https://www.vinted.fr"
 
-POST_DELAY = 2.5
-FETCH_INTERVAL = 60
+POST_DELAY = 3.0
+FETCH_INTERVAL = 180
 
 CATALOG_WOMEN   = [1]
 CATALOG_MEN     = [4]
-CATALOG_KIDS    = [306]
 CATALOG_FASHION = [1, 4, 306]
 
 NON_FASHION_IDS = {1187, 1231, 2642, 2643, 2644}
@@ -203,32 +202,41 @@ async def fetch_items(client: httpx.AsyncClient, params: dict) -> list[dict]:
         return []
 
 
-async def channel_fetcher(ch_cfg: dict) -> None:
+async def fetch_all_channels(client: httpx.AsyncClient) -> None:
+    await get_vinted_session(client)
+    for ch_cfg in CHANNELS:
+        try:
+            params = dict(ch_cfg["params"])
+            items = await fetch_items(client, params)
+            filter_fn = ch_cfg["filter"]
+            channel_id = ch_cfg["id"]
+
+            for item in reversed(items):
+                item_id = str(item.get("id", ""))
+                if not item_id:
+                    continue
+                if channel_id in posted.get(item_id, set()):
+                    continue
+                if not filter_fn(item):
+                    continue
+                if not item.get("photos"):
+                    continue
+                posted.setdefault(item_id, set()).add(channel_id)
+                await post_queue.put((channel_id, item))
+
+        except Exception as e:
+            log.error("Fetcher error for %s: %s", ch_cfg["name"], e)
+
+        await asyncio.sleep(random.uniform(8, 15))
+
+
+async def scanner_loop() -> None:
     async with httpx.AsyncClient(follow_redirects=True) as client:
-        await get_vinted_session(client)
         while True:
             try:
-                params = dict(ch_cfg["params"])
-                items = await fetch_items(client, params)
-                filter_fn = ch_cfg["filter"]
-                channel_id = ch_cfg["id"]
-
-                for item in reversed(items):
-                    item_id = str(item.get("id", ""))
-                    if not item_id:
-                        continue
-                    if channel_id in posted.get(item_id, set()):
-                        continue
-                    if not filter_fn(item):
-                        continue
-                    if not item.get("photos"):
-                        continue
-                    posted.setdefault(item_id, set()).add(channel_id)
-                    await post_queue.put((channel_id, item))
-
+                await fetch_all_channels(client)
             except Exception as e:
-                log.error("Fetcher error for %s: %s", ch_cfg["name"], e)
-
+                log.error("Scanner error: %s", e)
             await asyncio.sleep(FETCH_INTERVAL)
 
 
@@ -256,14 +264,13 @@ async def poster() -> None:
             for k in overflow:
                 del posted[k]
 
-        await asyncio.sleep(POST_DELAY + random.uniform(0, 1))
+        await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
 
 
 @bot.event
 async def on_ready():
     log.info("Vinted bot ready as %s", bot.user)
-    for ch_cfg in CHANNELS:
-        bot.loop.create_task(channel_fetcher(ch_cfg))
+    bot.loop.create_task(scanner_loop())
     bot.loop.create_task(poster())
 
 
