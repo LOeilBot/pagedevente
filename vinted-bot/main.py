@@ -20,7 +20,6 @@ VINTED_BASE = "https://www.vinted.fr"
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
 
-# catalog_id=5 = Hommes sur vinted.fr (confirmé)
 HOMME_CATALOG_ID = 5
 
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good", "good"}
@@ -67,7 +66,8 @@ BLACKLIST = [
     "chapeau", "casquette", "bonnet", "hat ", " hat",
     "sac ", " sac", "bag ", " bag", "backpack", "pochette",
     "portefeuille", "wallet",
-    "parfum", "perfume", "cologne",
+    "parfum", "perfume", "cologne", "fragrance", "eau de toilette", "eau de parfum",
+    "edp", "edt", "deodorant", "déodorant", "aftershave", "after-shave",
     "peluche", "jouet", "toy",
 ]
 
@@ -101,7 +101,9 @@ def not_femme(item: dict) -> bool:
     text = (
         item.get("title", "") + " " +
         item.get("description", "") + " " +
-        item.get("url", "")
+        item.get("url", "") + " " +
+        item.get("brand_title", "") + " " +
+        item.get("category_title", "")
     ).lower()
     return not any(w in text for w in BLACKLIST)
 
