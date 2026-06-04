@@ -139,26 +139,28 @@ def build_embed(item: dict) -> discord.Embed:
     photos = item.get("photos", [])
     photo_url = photos[0].get("url", "") if photos else ""
 
-    conditions = {
-        "new_with_tags": "Neuf avec étiquettes ✨",
-        "new_without_tags": "Neuf sans étiquettes ✨",
-        "very_good": "Très bon état 👍",
-        "good": "Bon état",
-        "satisfactory": "État satisfaisant",
+    condition_map = {
+        "new_with_tags":    ("Neuf avec étiquettes", 0x2ECC71),
+        "new_without_tags": ("Neuf sans étiquettes", 0x27AE60),
+        "very_good":        ("Très bon état",        0x3498DB),
+        "good":             ("Bon état",             0xF39C12),
+        "satisfactory":     ("État satisfaisant",    0xE67E22),
     }
-    condition_label = conditions.get(condition, condition)
+    condition_label, color = condition_map.get(condition, (condition, 0x95A5A6))
 
-    embed = discord.Embed(title=title, color=0x1E90FF)
-    embed.add_field(name="💰 Prix", value=f"**{price} {currency}**", inline=True)
-    if brand:
-        embed.add_field(name="🏷️ Marque", value=brand, inline=True)
+    lines = [f"** {price} {currency}**"]
     if size:
-        embed.add_field(name="📏 Taille", value=size, inline=True)
+        lines.append(f"📐 **Taille :** {size}")
     if condition_label:
-        embed.add_field(name="✨ État", value=condition_label, inline=True)
+        lines.append(f"🏷 **État :** {condition_label}")
+    if brand:
+        lines.append(f"✦ **Marque :** {brand}")
+
+    embed = discord.Embed(description="\n".join(lines), color=color)
+    embed.set_author(name=title)
     if photo_url:
         embed.set_image(url=photo_url)
-    embed.set_footer(text="Vinted")
+    embed.set_footer(text=f"Vinted  •  {brand}" if brand else "Vinted")
     embed.timestamp = datetime.now(timezone.utc)
     return embed
 
