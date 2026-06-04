@@ -20,6 +20,8 @@ VINTED_BASE = "https://www.vinted.fr"
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
 
+HOMME_CATALOG_ID = 5
+
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good", "good"}
 
 PREMIUM_BRANDS = [
@@ -86,11 +88,6 @@ def not_femme(item: dict) -> bool:
     return not any(w in text for w in FEMME_WORDS)
 
 
-def is_homme_url(item: dict) -> bool:
-    url = item.get("url", "").lower()
-    return "hommes" in url or "homme" in url
-
-
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
@@ -153,31 +150,8 @@ async def get_vinted_session(client: httpx.AsyncClient) -> None:
         log.warning("Session init failed: %s", e)
 
 
-async def find_homme_catalog_id(client: httpx.AsyncClient) -> int:
-    await get_vinted_session(client)
-    for cid in range(1, 21):
-        try:
-            url = f"{VINTED_BASE}/api/v2/catalog/items?order=newest_first&page=1&per_page=3&catalog_ids[]={cid}"
-            resp = await client.get(url, headers=HEADERS, timeout=10)
-            if resp.status_code != 200:
-                continue
-            items = resp.json().get("items", [])
-            if not items:
-                continue
-            item_url = items[0].get("url", "").lower()
-            log.info("catalog_id=%d → URL: %s", cid, item_url[:60])
-            if "hommes" in item_url or "homme" in item_url:
-                log.info("✅ Trouvé catalog Hommes: ID=%d", cid)
-                return cid
-            await asyncio.sleep(2)
-        except Exception as e:
-            log.warning("Test catalog %d failed: %s", cid, e)
-    log.warning("catalog Hommes non trouvé, fallback ID=5")
-    return 5
-
-
-async def fetch_items(client: httpx.AsyncClient, catalog_id: int, extra_params: str = "") -> list[dict]:
-    url = f"{VINTED_BASE}/api/v2/catalog/items?order=newest_first&page=1&per_page=96&catalog_ids[]={catalog_id}{extra_params}"
+async def fetch_items(client: httpx.AsyncClient, extra_params: str = "") -> list[dict]:
+    url = f"{VINTED_BASE}/api/v2/catalog/items?order=newest_first&page=1&per_page=96&catalog_ids[]={HOMME_CATALOG_ID}{extra_params}"
     try:
         resp = await client.get(url, headers=HEADERS, timeout=15)
         if resp.status_code == 401:
@@ -185,38 +159,38 @@ async def fetch_items(client: httpx.AsyncClient, catalog_id: int, extra_params: 
             resp = await client.get(url, headers=HEADERS, timeout=15)
         resp.raise_for_status()
         items = resp.json().get("items", [])
-        log.info("Fetched %d items (catalog %d)", len(items), catalog_id)
+        log.info("Fetched %d items", len(items))
         return items
     except Exception as e:
         log.error("Fetch error: %s", e)
         return []
 
 
-async def fetch_all_channels(client: httpx.AsyncClient, homme_id: int) -> None:
+async def fetch_all_channels(client: httpx.AsyncClient) -> None:
     await get_vinted_session(client)
     fetches = [
         {
             "channel_id": 1512096461930627142,
             "name": "#alertes-vinted",
             "extra": "",
-            "filter": lambda item: is_homme_url(item) or not_femme(item),
+            "filter": lambda item: not_femme(item),
         },
         {
             "channel_id": 1512096568818270299,
             "name": "#bonnes-affaires",
             "extra": "&price_to=30",
-            "filter": lambda item: (is_homme_url(item) or not_femme(item)) and get_price(item) <= 30 and is_good_condition(item),
+            "filter": lambda item: not_femme(item) and get_price(item) <= 30 and is_good_condition(item),
         },
         {
             "channel_id": 1512096652570267658,
             "name": "#marques-premium",
             "extra": "&price_to=50",
-            "filter": lambda item: (is_homme_url(item) or not_femme(item)) and get_price(item) <= 50 and is_premium_brand(item),
+            "filter": lambda item: not_femme(item) and get_price(item) <= 50 and is_premium_brand(item),
         },
     ]
     for fetch_cfg in fetches:
         try:
-            items = await fetch_items(client, homme_id, fetch_cfg["extra"])
+            items = await fetch_items(client, fetch_cfg["extra"])
             channel_id = fetch_cfg["channel_id"]
             filter_fn = fetch_cfg["filter"]
             queued = 0
@@ -239,12 +213,12 @@ async def fetch_all_channels(client: httpx.AsyncClient, homme_id: int) -> None:
         await asyncio.sleep(random.uniform(8, 15))
 
 
-async def scanner_loop(homme_id: int) -> None:
+async def scanner_loop() -> None:
     async with httpx.AsyncClient(follow_redirects=True) as client:
         while True:
-            log.info("=== Scan Vinted (catalog Hommes ID=%d) ===", homme_id)
+            log.info("=== Scan Vinted ===")
             try:
-                await fetch_all_channels(client, homme_id)
+                await fetch_all_channels(client)
             except Exception as e:
                 log.error("Scanner error: %s", e)
             await asyncio.sleep(FETCH_INTERVAL)
@@ -276,9 +250,7 @@ async def poster(channel_id: int) -> None:
 @bot.event
 async def on_ready():
     log.info("Bot prêt : %s", bot.user)
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        homme_id = await find_homme_catalog_id(client)
-    bot.loop.create_task(scanner_loop(homme_id))
+    bot.loop.create_task(scanner_loop())
     for cid in CHANNEL_IDS:
         bot.loop.create_task(poster(cid))
 
