@@ -199,7 +199,7 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
             "channel_id": 1512096568818270299,
             "name": "#bonnes-affaires",
             "extra": "&price_to=30",
-            "filter": lambda item: not_femme(item) and get_price(item) <= 30 and is_good_condition(item),
+            "filter": lambda item: not_femme(item) and get_price(item) <= 30,
         },
         {
             "channel_id": 1512096652570267658,
