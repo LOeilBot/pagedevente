@@ -200,15 +200,6 @@
       margin-bottom: 1rem;
     }
 
-    .dc-channel {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-    }
-
     .dc-msg { display: flex; gap: .8rem; margin-bottom: 1.2rem; }
 
     .dc-avatar {
@@ -241,17 +232,6 @@
     .dc-embed-field { color: #B9BBBE; line-height: 1.5; }
     .dc-embed-field strong { color: var(--teal); }
 
-    .dc-tag {
-      display: inline-block;
-      background: rgba(0,201,167,.15);
-      color: var(--teal);
-      font-size: .7rem;
-      font-weight: 600;
-      padding: .15rem .5rem;
-      border-radius: 4px;
-      margin-top: .5rem;
-    }
-
     .new-badge {
       position: absolute;
       top: -10px; right: 20px;
@@ -276,7 +256,6 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 2rem;
-      position: relative;
       transition: border-color .2s;
     }
     .step:hover { border-color: rgba(0,201,167,.4); }
@@ -308,11 +287,7 @@
     }
     .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,201,167,.35); }
 
-    .feature-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
+    .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
@@ -359,25 +334,9 @@
     .plan-price span { font-size: 1rem; font-weight: 500; color: var(--muted); }
     .plan-desc { font-size: .88rem; color: var(--muted); margin: .8rem 0 1.5rem; }
 
-    .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li {
-      font-size: .88rem;
-      padding: .45rem 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-    }
-    .plan-features li::before { content: '✓'; color: var(--teal); font-weight: 700; }
-    .plan-features li.no::before { content: '✕'; color: var(--muted); }
-    .plan-features li.no { color: var(--muted); }
-
     /* ── FAQ ── */
     .faq { max-width: 700px; margin: 3rem auto 0; }
-
-    .faq-item {
-      border-bottom: 1px solid var(--border);
-    }
+    .faq-item { border-bottom: 1px solid var(--border); }
 
     .faq-q {
       width: 100%;
@@ -459,7 +418,6 @@
       display: flex;
       flex-direction: column;
     }
-    .testi-text { flex: 1; }
 
     .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
     .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; flex: 1; }
@@ -500,13 +458,11 @@
 <div id="vip-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:24px;max-width:480px;width:100%;padding:2.5rem;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);">
     <button onclick="document.getElementById('vip-modal').style.display='none'" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;">×</button>
-
     <div style="text-align:center;margin-bottom:2rem;">
       <div style="width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1rem;">🎁</div>
       <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:.6rem;">Rejoignez la liste <span class="grad-text">VIP</span></h2>
       <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires sur Vinted"</strong> + offres exclusives en avant-première.</p>
     </div>
-
     <div id="vip-form">
       <div style="margin-bottom:1rem;">
         <input type="email" id="vip-email" placeholder="votre@email.com"
@@ -518,7 +474,6 @@
       </button>
       <p style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:.8rem;">Pas de spam. Désabonnement en 1 clic.</p>
     </div>
-
     <div id="vip-success" style="display:none;text-align:center;padding:1rem 0;">
       <div style="font-size:2.5rem;margin-bottom:.8rem;">✅</div>
       <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:.4rem;">C'est dans votre boîte !</h3>
@@ -548,10 +503,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="badge"><span></span> Bot Discord en temps réel</div>
-  <h1>
-    Soyez le <span class="grad-text">premier</span> à voir<br />
-    les meilleures annonces
-  </h1>
+  <h1>Soyez le <span class="grad-text">premier</span> à voir<br />les meilleures annonces</h1>
   <p>L'Oeil scanne en continu et vous alerte instantanément sur Discord dès qu'une opportunité rare apparaît. Fini les bonnes affaires manquées.</p>
   <div class="hero-buttons">
     <a href="#pricing" class="btn-primary">Accéder à L'Oeil →</a>
@@ -559,8 +511,8 @@
   </div>
   <div class="hero-stats">
     <div class="stat"><div class="stat-num grad-text">24/7</div><div class="stat-label">Surveillance continue</div></div>
-    <div class="stat"><div class="stat-num grad-text">&lt; 5s</div><div class="stat-label">Délai d'alerte</div></div>
-    <div class="stat"><div class="stat-num grad-text">∞</div><div class="stat-label">Annonces analysées</div></div>
+    <div class="stat"><div class="stat-num grad-text">&lt; 3s</div><div class="stat-label">Délai d'alerte</div></div>
+    <div class="stat"><div class="stat-num grad-text" style="font-size:2rem;">∞</div><div class="stat-label">Annonces analysées</div></div>
   </div>
 </section>
 
@@ -569,7 +521,11 @@
   <div class="container" style="display:flex;justify-content:center;">
     <div class="discord-card">
       <div class="new-badge">🔴 LIVE</div>
-      <div class="dc-channel"># 🔎︱alertes-annonces</div>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+        <span style="font-size:.72rem;color:#72767D;background:#2F3136;padding:.2rem .6rem;border-radius:4px;"># alertes-vinted</span>
+        <span style="font-size:.72rem;color:#72767D;background:#2F3136;padding:.2rem .6rem;border-radius:4px;"># bonnes-affaires</span>
+        <span style="font-size:.72rem;color:var(--teal);background:rgba(0,201,167,.1);padding:.2rem .6rem;border-radius:4px;">🏆 marques-premium</span>
+      </div>
       <div class="dc-msg">
         <div class="dc-avatar" style="background:#000;padding:0;overflow:hidden;">
           <svg viewBox="0 0 36 36" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
@@ -590,9 +546,9 @@
           <div class="dc-embed">
             <div class="dc-embed-title">🚨 Nouvelle annonce détectée !</div>
             <div class="dc-embed-field">
-              <strong>Titre :</strong> iPhone 15 Pro Max 256Go — Comme neuf<br/>
-              <strong>Prix :</strong> 650€<br/>
-              <strong>Posté il y a :</strong> 12 secondes
+              <strong>Titre :</strong> Nike Air Force 1 — Comme neuf<br/>
+              <strong>Prix :</strong> 55€<br/>
+              <strong>Posté il y a :</strong> 3 secondes
             </div>
           </div>
         </div>
@@ -623,8 +579,8 @@
       </div>
       <div class="step">
         <div class="step-num grad-text">02</div>
-        <h3>Configurez vos filtres</h3>
-        <p>Indiquez ce que vous cherchez : catégorie, budget max, zone géographique, mots-clés.</p>
+        <h3>Rejoignez le Discord</h3>
+        <p>Accédez à vos salons dédiés : #alertes-vinted, #bonnes-affaires et #marques-premium.</p>
       </div>
       <div class="step">
         <div class="step-num grad-text">03</div>
@@ -646,12 +602,12 @@
       <div class="feature-card">
         <div class="feature-icon">⚡</div>
         <h3>Alertes en temps réel</h3>
-        <p>Détection sous 5 secondes après publication. Soyez systématiquement le premier contacté.</p>
+        <p>Détection sous 3 secondes après publication. Soyez systématiquement le premier contacté.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>Filtres ultra-précis</h3>
-        <p>Catégorie, prix, mots-clés, nom d'article, date de mise en ligne — vous maîtrisez tout.</p>
+        <div class="feature-icon">📂</div>
+        <h3>Salons organisés</h3>
+        <p>Chaque annonce atterrit au bon endroit : <strong style="color:var(--teal);">#alertes-vinted</strong>, <strong style="color:var(--teal);">#bonnes-affaires</strong> ou <strong style="color:var(--teal);">#marques-premium</strong>. Rien à trier, tout est déjà classé.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">💬</div>
