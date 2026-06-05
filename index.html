@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --teal:   #00C9A7;
       --blue:   #0080FF;
@@ -21,485 +20,108 @@
       --text:   #E8F0F8;
       --muted:  #6B7A8D;
     }
-
     html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    /* ── UTILITY ── */
-    .grad-text {
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      background: var(--grad);
-      color: #fff;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: .85rem 2rem;
-      border-radius: 50px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: transform .2s, box-shadow .2s;
-      box-shadow: 0 0 30px rgba(0,201,167,.25);
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    .grad-text { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .btn-primary { display: inline-flex; align-items: center; gap: .5rem; background: var(--grad); color: #fff; font-weight: 700; font-size: 1rem; padding: .85rem 2rem; border-radius: 50px; border: none; cursor: pointer; text-decoration: none; transition: transform .2s, box-shadow .2s; box-shadow: 0 0 30px rgba(0,201,167,.25); }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(0,201,167,.4); }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      background: transparent;
-      color: var(--text);
-      font-weight: 600;
-      font-size: .95rem;
-      padding: .8rem 1.8rem;
-      border-radius: 50px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      text-decoration: none;
-      transition: border-color .2s, background .2s;
-    }
+    .btn-ghost { display: inline-flex; align-items: center; gap: .5rem; background: transparent; color: var(--text); font-weight: 600; font-size: .95rem; padding: .8rem 1.8rem; border-radius: 50px; border: 1px solid var(--border); cursor: pointer; text-decoration: none; transition: border-color .2s, background .2s; }
     .btn-ghost:hover { border-color: var(--teal); background: rgba(0,201,167,.06); }
-
     .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
     .section { padding: 6rem 0; }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(8,12,16,.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-size: 1.4rem;
-      font-weight: 900;
-      letter-spacing: -.5px;
-    }
-
-    .nav-cta { font-size: .9rem; padding: .6rem 1.4rem; }
-
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 7rem 1.5rem 5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 800px; height: 800px;
-      background: radial-gradient(ellipse, rgba(0,201,167,.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .4rem;
-      background: rgba(0,201,167,.1);
-      border: 1px solid rgba(0,201,167,.3);
-      color: var(--teal);
-      font-size: .8rem;
-      font-weight: 600;
-      padding: .4rem 1rem;
-      border-radius: 50px;
-      margin-bottom: 1.8rem;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-    }
-
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; background: rgba(8,12,16,.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .logo { font-size: 1.4rem; font-weight: 900; letter-spacing: -.5px; }
+    .nav-cta { font-size: .95rem; padding: .85rem 1.6rem; }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 7rem 1.5rem 5rem; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; background: radial-gradient(ellipse, rgba(0,201,167,.12) 0%, transparent 70%); pointer-events: none; }
+    .badge { display: inline-flex; align-items: center; gap: .4rem; background: rgba(0,201,167,.1); border: 1px solid rgba(0,201,167,.3); color: var(--teal); font-size: .8rem; font-weight: 600; padding: .4rem 1rem; border-radius: 50px; margin-bottom: 1.8rem; letter-spacing: .05em; text-transform: uppercase; }
     .badge span { display: inline-block; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 1.5s infinite; }
-
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
-
-    .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4.5rem);
-      font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -.02em;
-      max-width: 820px;
-      margin-bottom: 1.4rem;
-    }
-
-    .hero p {
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--muted);
-      max-width: 560px;
-      margin-bottom: 2.5rem;
-    }
-
+    .hero h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; letter-spacing: -.02em; max-width: 820px; margin-bottom: 1.4rem; }
+    .hero p { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--muted); max-width: 560px; margin-bottom: 2.5rem; }
     .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
-
-    .hero-stats {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 4rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
+    .hero-stats { display: flex; gap: 2.5rem; margin-top: 4rem; flex-wrap: wrap; justify-content: center; }
     .stat { text-align: center; }
     .stat-num { font-size: 2rem; font-weight: 900; }
     .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
-
-    /* ── DISCORD MOCKUP ── */
-    .mockup-section {
-      padding: 2rem 0 6rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .discord-card {
-      background: #1E2124;
-      border-radius: 16px;
-      padding: 1.2rem 1.5rem;
-      max-width: 480px;
-      width: 100%;
-      border: 1px solid rgba(255,255,255,.06);
-      box-shadow: 0 24px 80px rgba(0,0,0,.6);
-      position: relative;
-    }
-
-    .discord-card::before {
-      content: '● ● ●';
-      font-size: .55rem;
-      letter-spacing: .4em;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 1rem;
-    }
-
-    .dc-channel {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-    }
-
+    .mockup-section { padding: 2rem 0 6rem; display: flex; justify-content: center; }
+    .discord-card { background: #1E2124; border-radius: 16px; padding: 1.2rem 1.5rem; max-width: 480px; width: 100%; border: 1px solid rgba(255,255,255,.06); box-shadow: 0 24px 80px rgba(0,0,0,.6); position: relative; }
+    .discord-card::before { content: '● ● ●'; font-size: .55rem; letter-spacing: .4em; color: var(--muted); display: block; margin-bottom: 1rem; }
+    .dc-channel { font-size: .75rem; color: var(--muted); margin-bottom: 1rem; display: flex; align-items: center; gap: .4rem; }
     .dc-msg { display: flex; gap: .8rem; margin-bottom: 1.2rem; }
-
-    .dc-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--grad);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .75rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
+    .dc-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; color: #fff; }
     .dc-body { flex: 1; }
     .dc-name { font-size: .8rem; font-weight: 700; color: var(--teal); margin-bottom: .2rem; }
     .dc-time { font-size: .7rem; color: var(--muted); margin-left: .5rem; font-weight: 400; }
-
-    .dc-embed {
-      background: #2F3136;
-      border-left: 4px solid var(--teal);
-      border-radius: 4px;
-      padding: .8rem 1rem;
-      margin-top: .5rem;
-      font-size: .82rem;
-    }
-
+    .dc-embed { background: #2F3136; border-left: 4px solid var(--teal); border-radius: 4px; padding: .8rem 1rem; margin-top: .5rem; font-size: .82rem; }
     .dc-embed-title { font-weight: 700; color: #fff; margin-bottom: .3rem; }
     .dc-embed-field { color: #B9BBBE; line-height: 1.5; }
     .dc-embed-field strong { color: var(--teal); }
-
-    .dc-tag {
-      display: inline-block;
-      background: rgba(0,201,167,.15);
-      color: var(--teal);
-      font-size: .7rem;
-      font-weight: 600;
-      padding: .15rem .5rem;
-      border-radius: 4px;
-      margin-top: .5rem;
-    }
-
-    .new-badge {
-      position: absolute;
-      top: -10px; right: 20px;
-      background: var(--grad);
-      color: #fff;
-      font-size: .7rem;
-      font-weight: 700;
-      padding: .2rem .7rem;
-      border-radius: 50px;
-    }
-
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
-    .step {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      position: relative;
-      transition: border-color .2s;
-    }
+    .new-badge { position: absolute; top: -10px; right: 20px; background: var(--grad); color: #fff; font-size: .7rem; font-weight: 700; padding: .2rem .7rem; border-radius: 50px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .step { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: border-color .2s; }
     .step:hover { border-color: rgba(0,201,167,.4); }
-
-    .step-num {
-      font-size: 3rem;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: .8rem;
-    }
-
+    .step-num { font-size: 3rem; font-weight: 900; line-height: 1; margin-bottom: .8rem; }
     .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .step p { font-size: .88rem; color: var(--muted); }
-
-    /* ── FEATURES ── */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
-    .feature-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2rem;
-      transition: transform .2s, border-color .2s;
-    }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .feature-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; transition: transform .2s, border-color .2s; }
     .feature-card:hover { transform: translateY(-4px); border-color: rgba(0,201,167,.35); }
-
-    .feature-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
+    .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
-
-    /* ── PRICING ── */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .plan {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      position: relative;
-      transition: transform .2s;
-    }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto; }
+    .plan { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem 2rem; position: relative; transition: transform .2s; }
     .plan:hover { transform: translateY(-4px); }
-
-    .plan.featured {
-      border-color: var(--teal);
-      background: linear-gradient(160deg, rgba(0,201,167,.07) 0%, var(--bg2) 100%);
-    }
-
-    .plan-badge {
-      position: absolute;
-      top: -14px; left: 50%; transform: translateX(-50%);
-      background: var(--grad);
-      color: #fff;
-      font-size: .75rem;
-      font-weight: 700;
-      padding: .25rem 1rem;
-      border-radius: 50px;
-      white-space: nowrap;
-    }
-
+    .plan.featured { border-color: var(--teal); background: linear-gradient(160deg, rgba(0,201,167,.07) 0%, var(--bg2) 100%); }
+    .plan-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--grad); color: #fff; font-size: .75rem; font-weight: 700; padding: .25rem 1rem; border-radius: 50px; white-space: nowrap; }
     .plan-name { font-size: .85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .8rem; }
     .plan-price { font-size: 2.8rem; font-weight: 900; letter-spacing: -.02em; line-height: 1; }
     .plan-price span { font-size: 1rem; font-weight: 500; color: var(--muted); }
     .plan-desc { font-size: .88rem; color: var(--muted); margin: .8rem 0 1.5rem; }
-
-    .plan-features { list-style: none; margin-bottom: 2rem; }
-    .plan-features li {
-      font-size: .88rem;
-      padding: .45rem 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-    }
-    .plan-features li::before { content: '✓'; color: var(--teal); font-weight: 700; }
-    .plan-features li.no::before { content: '✕'; color: var(--muted); }
-    .plan-features li.no { color: var(--muted); }
-
-    /* ── FAQ ── */
     .faq { max-width: 700px; margin: 3rem auto 0; }
-
-    .faq-item {
-      border-bottom: 1px solid var(--border);
-    }
-
-    .faq-q {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: none;
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 600;
-      padding: 1.3rem 0;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: inherit;
-    }
-
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { width: 100%; text-align: left; background: none; border: none; color: var(--text); font-size: 1rem; font-weight: 600; padding: 1.3rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: inherit; }
     .faq-q::after { content: '+'; font-size: 1.4rem; color: var(--teal); transition: transform .2s; }
     .faq-item.open .faq-q::after { transform: rotate(45deg); }
-
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .3s ease, padding .3s;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.7;
-    }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s; color: var(--muted); font-size: .92rem; line-height: 1.7; }
     .faq-item.open .faq-a { max-height: 200px; padding-bottom: 1.2rem; }
-
-    /* ── CTA BOTTOM ── */
-    .cta-bottom {
-      text-align: center;
-      padding: 6rem 1.5rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-bottom::before {
-      content: '';
-      position: absolute;
-      bottom: -100px; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(ellipse, rgba(0,128,255,.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
+    .cta-bottom { text-align: center; padding: 6rem 1.5rem; position: relative; overflow: hidden; }
+    .cta-bottom::before { content: ''; position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(ellipse, rgba(0,128,255,.1) 0%, transparent 70%); pointer-events: none; }
     .cta-bottom h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1rem; }
     .cta-bottom p { color: var(--muted); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: .82rem;
-    }
-
-    /* ── SECTION TITLE ── */
+    footer { border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .82rem; }
     .section-title { text-align: center; }
     .section-title h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -.02em; }
     .section-title p { color: var(--muted); margin-top: .8rem; max-width: 520px; margin-left: auto; margin-right: auto; }
-
-    /* ── TESTIMONIALS ── */
-    .testimonials {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3rem;
-    }
-
-    .testi {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.8rem;
-      display: flex;
-      flex-direction: column;
-    }
-    .testi-text { flex: 1; }
-
+    .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .testi { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.8rem; display: flex; flex-direction: column; }
     .testi-stars { color: #FFB800; margin-bottom: .8rem; font-size: .9rem; }
     .testi-text { font-size: .9rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem; flex: 1; }
     .testi-author { display: flex; align-items: center; gap: .7rem; }
     .testi-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:#fff; flex-shrink:0; }
     .testi-name { font-size: .85rem; font-weight: 700; }
     .testi-sub { font-size: .75rem; color: var(--muted); }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .hero-buttons { flex-direction: column; align-items: center; }
-      .hero-stats { gap: 1.5rem; }
-    }
+    @media (max-width: 600px) { .hero-buttons { flex-direction: column; align-items: center; } .hero-stats { gap: 1.5rem; } }
   </style>
 </head>
 <body>
 
-<!-- VIP MODAL -->
 <div id="vip-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:24px;max-width:480px;width:100%;padding:2.5rem;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.6);">
     <button onclick="document.getElementById('vip-modal').style.display='none'" style="position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;">×</button>
-
     <div style="text-align:center;margin-bottom:2rem;">
       <div style="width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1rem;">🎁</div>
       <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:.6rem;">Rejoignez la liste <span class="grad-text">VIP</span></h2>
-      <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires sur Vinted"</strong> + offres exclusives en avant-première.</p>
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires"</strong> + offres exclusives en avant-première.</p>
     </div>
-
     <div id="vip-form">
       <div style="margin-bottom:1rem;">
-        <input type="email" id="vip-email" placeholder="votre@email.com"
-          style="width:100%;padding:1rem 1.2rem;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;"
-          onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'" />
+        <input type="email" id="vip-email" placeholder="votre@email.com" style="width:100%;padding:1rem 1.2rem;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.95rem;font-family:inherit;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--border)'" />
       </div>
-      <button onclick="submitVIP()" style="width:100%;padding:1rem;background:var(--grad);color:#fff;font-weight:700;font-size:1rem;border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:opacity .2s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
-        Recevoir le guide gratuit →
-      </button>
+      <button onclick="submitVIP()" style="width:100%;padding:1rem;background:var(--grad);color:#fff;font-weight:700;font-size:1rem;border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:opacity .2s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Recevoir le guide gratuit →</button>
       <p style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:.8rem;">Pas de spam. Désabonnement en 1 clic.</p>
     </div>
-
     <div id="vip-success" style="display:none;text-align:center;padding:1rem 0;">
       <div style="font-size:2.5rem;margin-bottom:.8rem;">✅</div>
       <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:.4rem;">C'est dans votre boîte !</h3>
@@ -508,7 +130,6 @@
   </div>
 </div>
 
-<!-- NAV -->
 <nav>
   <div class="logo grad-text">L'Oeil</div>
   <div style="display:flex;align-items:center;gap:.8rem;">
@@ -517,13 +138,9 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="badge"><span></span> Bot Discord en temps réel</div>
-  <h1>
-    Soyez le <span class="grad-text">premier</span> à voir<br />
-    les meilleures annonces
-  </h1>
+  <h1>Soyez le <span class="grad-text">premier</span> à voir<br />les meilleures annonces</h1>
   <p>L'Oeil scanne en continu et vous alerte instantanément sur Discord dès qu'une opportunité rare apparaît. Fini les bonnes affaires manquées.</p>
   <div class="hero-buttons">
     <a href="#pricing" class="btn-primary">Accéder à L'Oeil →</a>
@@ -536,7 +153,6 @@
   </div>
 </section>
 
-<!-- DISCORD MOCKUP -->
 <div class="mockup-section">
   <div class="container" style="display:flex;justify-content:center;">
     <div class="discord-card">
@@ -545,12 +161,7 @@
       <div class="dc-msg">
         <div class="dc-avatar" style="background:#000;padding:0;overflow:hidden;">
           <svg viewBox="0 0 36 36" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style="stop-color:#00BFFF"/>
-                <stop offset="100%" style="stop-color:#00FF88"/>
-              </linearGradient>
-            </defs>
+            <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00BFFF"/><stop offset="100%" style="stop-color:#00FF88"/></linearGradient></defs>
             <circle cx="18" cy="18" r="17" fill="#000" stroke="url(#rg)" stroke-width="2.5"/>
             <path d="M7 18 C10 11, 26 11, 29 18 C26 25, 10 25, 7 18Z" fill="none" stroke="white" stroke-width="2"/>
             <circle cx="18" cy="18" r="4" fill="none" stroke="white" stroke-width="2"/>
@@ -561,11 +172,7 @@
           <div class="dc-name">L'Oeil Bot <span class="dc-time">Aujourd'hui à 14:32</span></div>
           <div class="dc-embed">
             <div class="dc-embed-title">🚨 Nouvelle annonce détectée !</div>
-            <div class="dc-embed-field">
-              <strong>Titre :</strong> iPhone 15 Pro Max 256Go — Comme neuf<br/>
-              <strong>Prix :</strong> 650€<br/>
-              <strong>Posté il y a :</strong> 12 secondes
-            </div>
+            <div class="dc-embed-field"><strong>Titre :</strong> iPhone 15 Pro Max 256Go — Comme neuf<br/><strong>Prix :</strong> 650€<br/><strong>Posté il y a :</strong> 12 secondes</div>
           </div>
         </div>
       </div>
@@ -580,7 +187,6 @@
   </div>
 </div>
 
-<!-- HOW IT WORKS -->
 <section class="section" id="how">
   <div class="container">
     <div class="section-title">
@@ -588,26 +194,13 @@
       <p>Pas besoin de compétences techniques. Vous êtes opérationnel en moins de 5 minutes.</p>
     </div>
     <div class="steps">
-      <div class="step">
-        <div class="step-num grad-text">01</div>
-        <h3>Souscrivez</h3>
-        <p>Choisissez votre formule et accédez immédiatement à votre tableau de bord.</p>
-      </div>
-      <div class="step">
-        <div class="step-num grad-text">02</div>
-        <h3>Configurez vos filtres</h3>
-        <p>Indiquez ce que vous cherchez : catégorie, budget max, zone géographique, mots-clés.</p>
-      </div>
-      <div class="step">
-        <div class="step-num grad-text">03</div>
-        <h3>Recevez les alertes</h3>
-        <p>Le bot poste automatiquement dans votre Discord. Vous n'avez plus qu'à agir vite.</p>
-      </div>
+      <div class="step"><div class="step-num grad-text">01</div><h3>Souscrivez</h3><p>Choisissez votre formule et accédez immédiatement à votre tableau de bord.</p></div>
+      <div class="step"><div class="step-num grad-text">02</div><h3>Configurez vos filtres</h3><p>Indiquez ce que vous cherchez : catégorie, budget max, zone géographique, mots-clés.</p></div>
+      <div class="step"><div class="step-num grad-text">03</div><h3>Recevez les alertes</h3><p>Le bot poste automatiquement dans votre Discord. Vous n'avez plus qu'à agir vite.</p></div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
 <section class="section" style="background:var(--bg2);">
   <div class="container">
     <div class="section-title">
@@ -615,100 +208,51 @@
       <p>L'Oeil va bien plus loin qu'une simple notification.</p>
     </div>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Alertes en temps réel</h3>
-        <p>Détection sous 5 secondes après publication. Soyez systématiquement le premier contacté.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>Filtres ultra-précis</h3>
-        <p>Catégorie, prix, mots-clés, nom d'article, date de mise en ligne — vous maîtrisez tout.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <h3>Intégration Discord native</h3>
-        <p>Alertes directement dans votre serveur. Partagez avec votre communauté ou gardez ça pour vous.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Analyse de prix</h3>
-        <p>Le bot compare automatiquement le prix affiché avec le marché pour identifier les vraies opportunités.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">💳</div>
-        <h3>Abonnement simple</h3>
-        <p>Accès immédiat après souscription. Résiliez à tout moment, sans engagement caché.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌐</div>
-        <h3>Plateforme unique</h3>
-        <p>Pour le moment concentré sur une seule plateforme pour vous offrir la meilleure expérience possible.</p>
-      </div>
+      <div class="feature-card"><div class="feature-icon">⚡</div><h3>Alertes en temps réel</h3><p>Détection sous 5 secondes après publication. Soyez systématiquement le premier contacté.</p></div>
+      <div class="feature-card"><div class="feature-icon">🎯</div><h3>Filtres ultra-précis</h3><p>Catégorie, prix, mots-clés, nom d'article, date de mise en ligne — vous maîtrisez tout.</p></div>
+      <div class="feature-card"><div class="feature-icon">💬</div><h3>Intégration Discord native</h3><p>Alertes directement dans votre serveur. Partagez avec votre communauté ou gardez ça pour vous.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Analyse de prix</h3><p>Le bot compare automatiquement le prix affiché avec le marché pour identifier les vraies opportunités.</p></div>
+      <div class="feature-card"><div class="feature-icon">💳</div><h3>Abonnement simple</h3><p>Accès immédiat après souscription. Résiliez à tout moment, sans engagement caché.</p></div>
+      <div class="feature-card"><div class="feature-icon">🌐</div><h3>Plateforme unique</h3><p>Pour le moment concentré sur une seule plateforme pour vous offrir la meilleure expérience possible.</p></div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
 <section class="section">
   <div class="container">
-    <div class="section-title">
-      <h2>Ils ont pris <span class="grad-text">l'avantage</span></h2>
-    </div>
+    <div class="section-title"><h2>Ils ont pris <span class="grad-text">l'avantage</span></h2></div>
     <div class="testimonials">
       <div class="testi">
         <div style="background:#1E2124;border-radius:10px;border-left:4px solid #3BA55C;padding:1rem;display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.2rem;">
-          <div style="flex:1;">
-            <div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Jordan 11</div>
-            <div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> jordan<br><span style="color:#fff;font-weight:600;">Price:</span> 45.00 EUR</div>
-            <div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:55</div>
-          </div>
+          <div style="flex:1;"><div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Jordan 11</div><div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> jordan<br><span style="color:#fff;font-weight:600;">Price:</span> 45.00 EUR</div><div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:55</div></div>
           <div style="width:64px;height:64px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">👟</div>
         </div>
         <div class="testi-stars">★★★★★</div>
         <div class="testi-text">« C'était exactement ce que je cherchais. Je l'ai eu en quelques minutes. »</div>
-        <div class="testi-author">
-          <div class="testi-avatar">ML</div>
-          <div><div class="testi-name">Mathieu L.</div><div class="testi-sub">Revendeur</div></div>
-        </div>
+        <div class="testi-author"><div class="testi-avatar">ML</div><div><div class="testi-name">Mathieu L.</div><div class="testi-sub">Revendeur</div></div></div>
       </div>
       <div class="testi">
         <div style="background:#1E2124;border-radius:10px;border-left:4px solid #3BA55C;padding:1rem;display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.2rem;">
-          <div style="flex:1;">
-            <div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Adidas Spezial Bruin</div>
-            <div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> adidas<br><span style="color:#fff;font-weight:600;">Price:</span> 49.00 EUR</div>
-            <div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:59</div>
-          </div>
+          <div style="flex:1;"><div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Adidas Spezial Bruin</div><div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> adidas<br><span style="color:#fff;font-weight:600;">Price:</span> 49.00 EUR</div><div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:59</div></div>
           <div style="width:64px;height:64px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">👟</div>
         </div>
         <div class="testi-stars">★★★★★</div>
         <div class="testi-text">« Je les voulais depuis longtemps. L'Oeil me les a trouvées pendant que j'étais au travail. »</div>
-        <div class="testi-author">
-          <div class="testi-avatar">SR</div>
-          <div><div class="testi-name">Sarah R.</div><div class="testi-sub">Chineuse professionnelle</div></div>
-        </div>
+        <div class="testi-author"><div class="testi-avatar">SR</div><div><div class="testi-name">Sarah R.</div><div class="testi-sub">Chineuse professionnelle</div></div></div>
       </div>
       <div class="testi">
         <div style="background:#1E2124;border-radius:10px;border-left:4px solid #3BA55C;padding:1rem;display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.2rem;">
-          <div style="flex:1;">
-            <div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Sweat Nike</div>
-            <div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> nike<br><span style="color:#fff;font-weight:600;">Price:</span> 2.00 EUR</div>
-            <div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:55</div>
-          </div>
+          <div style="flex:1;"><div style="color:#00C9A7;font-weight:700;font-size:.95rem;margin-bottom:.4rem;">Sweat Nike</div><div style="color:#B9BBBE;font-size:.8rem;line-height:1.7;"><span style="color:#fff;font-weight:600;">Keyword:</span> nike<br><span style="color:#fff;font-weight:600;">Price:</span> 2.00 EUR</div><div style="color:#72767D;font-size:.72rem;margin-top:.6rem;">Vinted Monitor | Aujourd'hui à 18:55</div></div>
           <div style="width:64px;height:64px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;">👕</div>
         </div>
         <div class="testi-stars">★★★★★</div>
         <div class="testi-text">« 2€ à l'achat, revendu 35€. Le meilleur investissement du mois. »</div>
-        <div class="testi-author">
-          <div class="testi-avatar">KC</div>
-          <div><div class="testi-name">Kevin C.</div><div class="testi-sub">Trader d'occasion</div></div>
-        </div>
+        <div class="testi-author"><div class="testi-avatar">KC</div><div><div class="testi-name">Kevin C.</div><div class="testi-sub">Trader d'occasion</div></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
 <section class="section" id="pricing" style="background:var(--bg2);">
   <div class="container">
     <div class="section-title">
@@ -743,53 +287,27 @@
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="section">
   <div class="container">
-    <div class="section-title">
-      <h2>Questions <span class="grad-text">fréquentes</span></h2>
-    </div>
+    <div class="section-title"><h2>Questions <span class="grad-text">fréquentes</span></h2></div>
     <div class="faq">
-      <div class="faq-item">
-        <button class="faq-q">C'est quoi exactement L'Oeil ?</button>
-        <div class="faq-a">L'Oeil est un bot Discord qui surveille automatiquement les sites d'annonces en temps réel et vous envoie une notification instantanée dès qu'une annonce correspond à vos critères.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Est-ce que j'ai besoin de compétences techniques ?</button>
-        <div class="faq-a">Non. Si vous savez utiliser Discord, vous savez utiliser L'Oeil. La configuration se fait en quelques clics depuis un tableau de bord simple et clair.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Quels sites d'annonces sont couverts ?</button>
-        <div class="faq-a">Nous couvrons les principales plateformes d'annonces françaises. La liste s'agrandit régulièrement — tous les abonnés bénéficient des mises à jour sans surcoût.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Puis-je annuler à tout moment ?</button>
-        <div class="faq-a">Oui, sans conditions. Votre abonnement reste actif jusqu'à la fin de la période payée, puis s'arrête automatiquement. Aucun frais cachés.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Pourquoi passer par Discord ?</button>
-        <div class="faq-a">Discord vous permet de recevoir les alertes sur tous vos appareils simultanément, de les partager avec vos proches ou votre équipe, et de garder tout l'historique facilement accessible.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Pourquoi passer par Whop ?</button>
-        <div class="faq-a">Whop est une plateforme de paiement sécurisée qui attribue automatiquement votre rôle Discord dès la confirmation du paiement, sans aucune intervention manuelle. C'est une solution 100% autonome pour accéder instantanément au service.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Y a-t-il une autre solution pour obtenir le rôle ?</button>
-        <div class="faq-a">Oui, vous pouvez contacter directement <a href="mailto:service.loeil@gmail.com" style="color:var(--teal);">service.loeil@gmail.com</a> pour toute demande particulière.</div>
-      </div>
+      <div class="faq-item"><button class="faq-q">C'est quoi exactement L'Oeil ?</button><div class="faq-a">L'Oeil est un bot Discord qui surveille automatiquement les sites d'annonces en temps réel et vous envoie une notification instantanée dès qu'une annonce correspond à vos critères.</div></div>
+      <div class="faq-item"><button class="faq-q">Est-ce que j'ai besoin de compétences techniques ?</button><div class="faq-a">Non. Si vous savez utiliser Discord, vous savez utiliser L'Oeil. La configuration se fait en quelques clics depuis un tableau de bord simple et clair.</div></div>
+      <div class="faq-item"><button class="faq-q">Quels sites d'annonces sont couverts ?</button><div class="faq-a">Nous couvrons les principales plateformes d'annonces françaises. La liste s'agrandit régulièrement — tous les abonnés bénéficient des mises à jour sans surcoût.</div></div>
+      <div class="faq-item"><button class="faq-q">Puis-je annuler à tout moment ?</button><div class="faq-a">Oui, sans conditions. Votre abonnement reste actif jusqu'à la fin de la période payée, puis s'arrête automatiquement. Aucun frais cachés.</div></div>
+      <div class="faq-item"><button class="faq-q">Pourquoi passer par Discord ?</button><div class="faq-a">Discord vous permet de recevoir les alertes sur tous vos appareils simultanément, de les partager avec vos proches ou votre équipe, et de garder tout l'historique facilement accessible.</div></div>
+      <div class="faq-item"><button class="faq-q">Pourquoi passer par Whop ?</button><div class="faq-a">Whop est une plateforme de paiement sécurisée qui attribue automatiquement votre rôle Discord dès la confirmation du paiement, sans aucune intervention manuelle. C'est une solution 100% autonome pour accéder instantanément au service.</div></div>
+      <div class="faq-item"><button class="faq-q">Y a-t-il une autre solution pour obtenir le rôle ?</button><div class="faq-a">Oui, vous pouvez contacter directement <a href="mailto:service.loeil@gmail.com" style="color:var(--teal);">service.loeil@gmail.com</a> pour toute demande particulière.</div></div>
     </div>
   </div>
 </section>
 
-<!-- CTA BOTTOM -->
 <section class="cta-bottom">
   <h2>Prêt à voir avant <span class="grad-text">les autres</span> ?</h2>
   <p>Rejoignez les chasseurs qui ne ratent plus jamais une opportunité.</p>
   <a href="#pricing" class="btn-primary" style="font-size:1.1rem;padding:1rem 2.5rem;">Commencer maintenant →</a>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <p>© 2026 L'Oeil · Tous droits réservés · <a href="cgv.html" style="color:var(--muted);">CGV</a> · <a href="confidentialite.html" style="color:var(--muted);">Confidentialité</a></p>
 </footer>
@@ -816,7 +334,7 @@
         'api-key': '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',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email: email, listIds: [3] })
+      body: JSON.stringify({ email: email, listIds: [2] })
     }).then(() => {
       document.getElementById('vip-form').style.display = 'none';
       document.getElementById('vip-success').style.display = 'block';
