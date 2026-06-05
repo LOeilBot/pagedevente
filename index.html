@@ -32,7 +32,6 @@
       overflow-x: hidden;
     }
 
-    /* ── UTILITY ── */
     .grad-text {
       background: var(--grad);
       -webkit-background-clip: text;
@@ -78,7 +77,6 @@
     .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
     .section { padding: 6rem 0; }
 
-    /* ── NAV ── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -98,9 +96,8 @@
       letter-spacing: -.5px;
     }
 
-    .nav-cta { font-size: .9rem; padding: .6rem 1.4rem; }
+    .nav-cta { font-size: .95rem; padding: .85rem 1.6rem; }
 
-    /* ── HERO ── */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -173,7 +170,6 @@
     .stat-num { font-size: 2rem; font-weight: 900; }
     .stat-label { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
 
-    /* ── DISCORD MOCKUP ── */
     .mockup-section {
       padding: 2rem 0 6rem;
       display: flex;
@@ -263,7 +259,6 @@
       border-radius: 50px;
     }
 
-    /* ── HOW IT WORKS ── */
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -291,7 +286,6 @@
     .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .5rem; }
     .step p { font-size: .88rem; color: var(--muted); }
 
-    /* ── FEATURES ── */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -316,7 +310,6 @@
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .6rem; }
     .feature-card p { font-size: .88rem; color: var(--muted); line-height: 1.7; }
 
-    /* ── PRICING ── */
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -372,7 +365,6 @@
     .plan-features li.no::before { content: '✕'; color: var(--muted); }
     .plan-features li.no { color: var(--muted); }
 
-    /* ── FAQ ── */
     .faq { max-width: 700px; margin: 3rem auto 0; }
 
     .faq-item {
@@ -408,7 +400,6 @@
     }
     .faq-item.open .faq-a { max-height: 200px; padding-bottom: 1.2rem; }
 
-    /* ── CTA BOTTOM ── */
     .cta-bottom {
       text-align: center;
       padding: 6rem 1.5rem;
@@ -429,7 +420,6 @@
     .cta-bottom h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; margin-bottom: 1rem; }
     .cta-bottom p { color: var(--muted); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
 
-    /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
       padding: 2rem 1.5rem;
@@ -438,12 +428,10 @@
       font-size: .82rem;
     }
 
-    /* ── SECTION TITLE ── */
     .section-title { text-align: center; }
     .section-title h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -.02em; }
     .section-title p { color: var(--muted); margin-top: .8rem; max-width: 520px; margin-left: auto; margin-right: auto; }
 
-    /* ── TESTIMONIALS ── */
     .testimonials {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -468,7 +456,6 @@
     .testi-name { font-size: .85rem; font-weight: 700; }
     .testi-sub { font-size: .75rem; color: var(--muted); }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       .hero-buttons { flex-direction: column; align-items: center; }
       .hero-stats { gap: 1.5rem; }
@@ -485,7 +472,7 @@
     <div style="text-align:center;margin-bottom:2rem;">
       <div style="width:56px;height:56px;background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 1rem;">🎁</div>
       <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:.6rem;">Rejoignez la liste <span class="grad-text">VIP</span></h2>
-      <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires sur Vinted"</strong> + offres exclusives en avant-première.</p>
+      <p style="color:var(--muted);font-size:.88rem;line-height:1.6;">Recevez gratuitement le guide <strong style="color:var(--teal);">"5 astuces pour trouver les meilleures affaires"</strong> + offres exclusives en avant-première.</p>
     </div>
 
     <div id="vip-form">
@@ -512,8 +499,8 @@
 <nav>
   <div class="logo grad-text">L'Oeil</div>
   <div style="display:flex;align-items:center;gap:.8rem;">
-    <button onclick="document.getElementById('vip-modal').style.display='flex'" class="btn-ghost" style="border-color:rgba(0,201,167,.4);color:var(--teal);font-size:.9rem;padding:.6rem 1.4rem;height:2.6rem;">🎁 Guide gratuit</button>
-    <a href="#pricing" class="btn-primary nav-cta" style="height:2.6rem;">Commencer →</a>
+    <button onclick="document.getElementById('vip-modal').style.display='flex'" class="btn-ghost" style="border-color:rgba(0,201,167,.4);color:var(--teal);font-size:.95rem;padding:.85rem 1.6rem;">🎁 Guide gratuit</button>
+    <a href="#pricing" class="btn-primary nav-cta">Commencer →</a>
   </div>
 </nav>
 
