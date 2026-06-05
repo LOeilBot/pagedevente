@@ -102,7 +102,12 @@
     .testi-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display:flex; align-items:center; justify-content:center; font-size:.75rem; font-weight:700; color:#fff; flex-shrink:0; }
     .testi-name { font-size: .85rem; font-weight: 700; }
     .testi-sub { font-size: .75rem; color: var(--muted); }
-    @media (max-width: 600px) { .hero-buttons { flex-direction: column; align-items: center; } .hero-stats { gap: 1.5rem; } }
+    @media (max-width: 600px) {
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .hero-stats { gap: 1.5rem; }
+      .btn-ghost.nav-guide { font-size: .75rem; padding: .55rem .9rem; }
+      .nav-cta { font-size: .75rem; padding: .55rem .9rem; }
+    }
   </style>
 </head>
 <body>
@@ -133,7 +138,7 @@
 <nav>
   <div class="logo grad-text">L'Oeil</div>
   <div style="display:flex;align-items:center;gap:.8rem;">
-    <button onclick="document.getElementById('vip-modal').style.display='flex'" class="btn-ghost" style="border-color:rgba(0,201,167,.4);color:var(--teal);font-size:.95rem;padding:.85rem 1.6rem;">🎁 Guide gratuit</button>
+    <button onclick="document.getElementById('vip-modal').style.display='flex'" class="btn-ghost nav-guide" style="border-color:rgba(0,201,167,.4);color:var(--teal);font-size:.95rem;padding:.85rem 1.6rem;">🎁 Guide gratuit</button>
     <a href="#pricing" class="btn-primary nav-cta">Commencer →</a>
   </div>
 </nav>
