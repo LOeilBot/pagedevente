@@ -99,6 +99,12 @@ BLACKLIST = [
     "profumo",
     "gel douche", "gel de ducha", "dusche", "duschgel", "shampoo", "shampooing",
     "savon", "soap", "shower", "lotion", "crème", "creme", "soin ",
+    "miniature", "miniatures", "flacon", "échantillon", "sample",
+    "collection privée", "collection prive", "collection authentique",
+    "collection exclusive", "collection prestige",
+    # Gants (FR + EN + IT + DE + ES)
+    "gant ", " gant", "gants", "glove", "gloves", "guante", "guantes",
+    "handschuh", "handschuhe", "guanto", "guanti",
     # Rasoirs / lames / soins barbe
     "rasoir", "razor", "gillette", "lame ", " lame", "recambio", "recambios",
     "beard", "barbe", "after shave", "baume barbe", "huile barbe",
@@ -294,7 +300,7 @@ async def fetch_all_channels(client: httpx.AsyncClient) -> None:
                 item_id = str(item.get("id", ""))
                 if not item_id:
                     continue
-                if channel_id in posted.get(item_id, set()):
+                if posted.get(item_id):
                     continue
                 if not filter_fn(item):
                     continue
