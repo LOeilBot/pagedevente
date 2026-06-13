@@ -2,12 +2,15 @@ import asyncio
 import logging
 import os
 import random
+import threading
 from datetime import datetime, timezone
 
 import discord
 from discord.ext import commands
 import httpx
 from dotenv import load_dotenv
+from flask import Flask, request, jsonify
+import stripe
 
 load_dotenv()
 
@@ -15,12 +18,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 VINTED_BASE = "https://www.vinted.fr"
-
 POST_DELAY = 3.0
 FETCH_INTERVAL = 180
-
 HOMME_CATALOG_ID = 5
+GUILD_ID = 1511049493133529138
+ROLE_ID = 1511058215817711748
 
 GOOD_CONDITIONS = {"new_with_tags", "new_without_tags", "very_good", "good"}
 
@@ -37,7 +41,6 @@ PREMIUM_BRANDS = [
 ]
 
 BLACKLIST = [
-    # Femme FR
     "femme", "fille", "madame", "dame", "vetements-femmes", "mixte",
     "robe", "jupe", "jupette",
     "soutien-gorge", "soutien gorge", "brassiere", "lingerie",
@@ -45,31 +48,20 @@ BLACKLIST = [
     "maternite", "maternité", "grossesse",
     "bikini", "tankini", "monokini",
     "escarpins", "stiletto", "ballerine",
-    # Femme EN
     "women", "woman", "girl", "girls", "ladies", "lady",
     "women's", "womens", "dress", "skirt", "bra ", " bra", "maternity", "heels",
-    # Femme DE
     "damen", "frau", "frauen", "kleid", "kleider",
-    # Femme IT
     "donna", "donne", "ragazza", "vestito", "gonna", "reggiseno",
-    # Femme ES/PT
     "mujer", "mujeres", "chica", "vestido", "falda", "mulher", "saia",
-    # Sous-vêtements (FR+EN+IT+DE+ES)
     "calecon", "caleçon", "culotte", "string", "shorty", "slip", "brief", "briefs",
     "boxer", "boxers", "underwear", "mutande", "mutandine", "calzoncillo", "unterhose",
-    # Chaussettes
     "chaussette", "chaussettes", "socken", "socks",
-    # Ceintures / bretelles
     "ceinture", "belt", "cinturon", "cintura",
     "bretelle", "bretelles", "suspender", "suspenders", "hosenträger", "hosentrager",
-    # Montres
     "montre", "watch", "orologio", "uhr", "reloj",
-    # Cravates (FR + IT + ES + DE)
     "cravate", "cravatta", "corbata", "krawatte", "tie ", " tie",
-    # Lunettes
     "lunette", "lunettes", "glasses", "sunglasses", "occhiali", "brille", "gafas",
     "zonnebril", "eyewear", "eye wear", "optical", "lentille",
-    # Bijoux (FR + ES + IT + DE + EN)
     "bijou", "bijoux", "collier", "bracelet", "bague", "boucle d'oreille",
     "jewelry", "necklace", "earring", "ring ", " ring",
     "collar ", " collar", "collana", "colares", "colgante",
@@ -78,22 +70,18 @@ BLACKLIST = [
     "braccialetto", "bracciale", "ciondolo", "cavigliera",
     "strass", "pendentif", "charm ", " charm",
     "pendientes", "pendiente", "arete", "aretes", "orecchino", "orecchini",
-    # Porte-cartes / portefeuilles / porte-monnaie
     "cardholder", "card holder", "porte-carte", "porte carte", "portacarte",
     "kartenhalter", "portafogli", "billetera",
     "porte-monnaie", "porte monnaie", "portemonnaie", "coin purse", "monedero",
     "portamonete", "geldbörse", "geldbeutel", "brieftasche",
-    # Chapeaux (FR + IT + ES + DE + NL)
     "chapeau", "casquette", "bonnet", "hat ", " hat",
     "cappellino", "cappello", "gorra", "mütze",
     "hute", "hüte", "hut ", " hut", "muts ", "pet ", "beanie",
-    # Sacs (FR + IT + DE + ES/PT + NL)
     "sac ", " sac", "bag ", " bag", "backpack", "pochette",
     "portefeuille", "wallet", "marsupio", "tasche",
     "mochila", "bolso", "bolsa", "rugzak", "rucksack",
     "zaino", "borsa", "borsello", "borsetta",
     "portemonnee", "portemonie", "geldbeutel",
-    # Parfums / hygiène (FR + IT + ES + DE + EN)
     "parfum", "perfume", "cologne", "fragrance", "eau de toilette", "eau de parfum",
     "edp", "edt", "deodorant", "déodorant", "aftershave", "after-shave",
     "profumo",
@@ -102,26 +90,19 @@ BLACKLIST = [
     "miniature", "miniatures", "flacon", "échantillon", "sample",
     "collection privée", "collection prive", "collection authentique",
     "collection exclusive", "collection prestige",
-    # Gants (FR + EN + IT + DE + ES)
     "gant ", " gant", "gants", "glove", "gloves", "guante", "guantes",
     "handschuh", "handschuhe", "guanto", "guanti",
-    # Rasoirs / lames / soins barbe
     "rasoir", "razor", "gillette", "lame ", " lame", "recambio", "recambios",
     "beard", "barbe", "after shave", "baume barbe", "huile barbe",
-    # Cosmétiques / soins corps
     "cofanetto", "coffret", "kit soin", "soin corps", "body oil", "body lotion",
     "sol de janeiro", "nuxe", "rituals", "loccitane", "l'occitane",
-    # Parfums / musc
     "musc", "musk", "oud ", " oud", "attar", "huile parfumée",
-    # Pièces auto / moto
     "phare", "feu arrière", "pare-choc", "pare choc", "carrosserie", "jante",
     "farolin", "farol ", "fanale", "scheinwerfer", "stoßstange",
     "pièce auto", "piece auto", "pièce moto", "piece moto",
     "amortisseur", "radiateur", "alternateur", "embrayage",
-    # Divers
     "peluche", "jouet", "toy", "lapin", "pilou", "déguisement", "deguisement", "costume",
     "action man", "action figure", "figurine",
-    # Marques femme connues
     "cache cache", "pimkie", "jennyfer", "primark femme", "shein", "zara femme",
 ]
 
@@ -192,6 +173,7 @@ def not_shoe(item: dict) -> bool:
 
 
 intents = discord.Intents.default()
+intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
@@ -229,10 +211,9 @@ def build_embed(item: dict) -> discord.Embed:
     condition_label = condition_map.get(condition, condition)
 
     embed = discord.Embed(title=f"**{title}**", color=0x00D4FF)
-
-    embed.add_field(name="💰  Prix",   value=f"```{price} {currency}```",                inline=True)
-    embed.add_field(name="📐  Taille", value=size if size else "—",                       inline=True)
-    embed.add_field(name="🏷️  Marque", value=f"**{brand}**" if brand else "—",           inline=True)
+    embed.add_field(name="💰  Prix",   value=f"```{price} {currency}```", inline=True)
+    embed.add_field(name="📐  Taille", value=size if size else "—",       inline=True)
+    embed.add_field(name="🏷️  Marque", value=f"**{brand}**" if brand else "—", inline=True)
     embed.add_field(name="✨  État",   value=condition_label if condition_label else "—", inline=True)
 
     if photo_url:
@@ -349,6 +330,50 @@ async def poster(channel_id: int) -> None:
         await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
 
 
+# ─── FLASK WEBHOOK ───────────────────────────────────────────────────────────
+
+app_flask = Flask(__name__)
+
+@app_flask.route("/webhook", methods=["POST"])
+def webhook():
+    payload = request.data
+    sig_header = request.headers.get("Stripe-Signature")
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, STRIPE_WEBHOOK_SECRET
+        )
+    except Exception as e:
+        return jsonify(error=str(e)), 400
+
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        fields = session.get("custom_fields", [])
+        discord_id = None
+        for field in fields:
+            if "text" in field:
+                discord_id = field["text"].get("value")
+        if discord_id:
+            asyncio.run_coroutine_threadsafe(
+                attribuer_role(discord_id), bot.loop
+            )
+            log.info("Paiement recu — attribution role a %s", discord_id)
+
+    return jsonify(success=True), 200
+
+
+async def attribuer_role(discord_user_id: str) -> None:
+    await bot.wait_until_ready()
+    guild = bot.get_guild(GUILD_ID)
+    member = await guild.fetch_member(int(discord_user_id))
+    role = guild.get_role(ROLE_ID)
+    await member.add_roles(role)
+    log.info("Role attribue a %s", discord_user_id)
+
+
+def run_flask() -> None:
+    app_flask.run(host="0.0.0.0", port=8080)
+
+
 @bot.event
 async def on_ready():
     log.info("Bot prêt : %s", bot.user)
@@ -358,4 +383,5 @@ async def on_ready():
 
 
 if __name__ == "__main__":
+    threading.Thread(target=run_flask, daemon=True).start()
     bot.run(DISCORD_TOKEN)
