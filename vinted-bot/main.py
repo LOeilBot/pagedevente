@@ -173,6 +173,7 @@ def not_shoe(item: dict) -> bool:
 
 
 intents = discord.Intents.default()
+intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
@@ -327,6 +328,15 @@ async def poster(channel_id: int) -> None:
             for k in list(posted.keys())[:len(posted) - 10000]:
                 del posted[k]
         await asyncio.sleep(POST_DELAY + random.uniform(0, 1.5))
+
+
+@bot.command(name="monid")
+async def mon_id(ctx):
+    await ctx.message.delete()
+    await ctx.author.send(
+        f"🆔 **Ton ID Discord : `{ctx.author.id}`**\n\n"
+        f"Copie ce numéro et colle-le dans le champ **ID Discord** lors de ton paiement sur notre site."
+    )
 
 
 # ─── FLASK WEBHOOK ───────────────────────────────────────────────────────────
