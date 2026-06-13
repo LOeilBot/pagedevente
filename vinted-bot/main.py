@@ -173,7 +173,6 @@ def not_shoe(item: dict) -> bool:
 
 
 intents = discord.Intents.default()
-intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 queues: dict[int, asyncio.Queue] = {cid: asyncio.Queue() for cid in CHANNEL_IDS}
 posted: dict[str, set[int]] = {}
