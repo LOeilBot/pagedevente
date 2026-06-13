@@ -370,12 +370,24 @@ def webhook():
 
 
 async def attribuer_role(discord_user_id: str) -> None:
-    await bot.wait_until_ready()
-    guild = bot.get_guild(GUILD_ID)
-    member = await guild.fetch_member(int(discord_user_id))
-    role = guild.get_role(ROLE_ID)
-    await member.add_roles(role)
-    log.info("Role attribue a %s", discord_user_id)
+    try:
+        await bot.wait_until_ready()
+        guild = bot.get_guild(GUILD_ID)
+        if guild is None:
+            log.error("Guild introuvable !")
+            return
+        member = await guild.fetch_member(int(discord_user_id))
+        if member is None:
+            log.error("Membre introuvable : %s", discord_user_id)
+            return
+        role = guild.get_role(ROLE_ID)
+        if role is None:
+            log.error("Role introuvable !")
+            return
+        await member.add_roles(role)
+        log.info("Role attribue a %s", discord_user_id)
+    except Exception as e:
+        log.error("Erreur attribution role : %s", e)
 
 
 def run_flask() -> None:
