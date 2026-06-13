@@ -332,10 +332,9 @@ async def poster(channel_id: int) -> None:
 
 @bot.command(name="monid")
 async def mon_id(ctx):
-    await ctx.message.delete()
     await ctx.author.send(
         f"🆔 **Ton ID Discord : `{ctx.author.id}`**\n\n"
-        f"Copie ce numéro et colle-le dans le champ **ID Discord** lors de ton paiement sur notre site."
+        f"Copie ce numéro et colle-le dans le champ **ID Discord** lors de ton paiement."
     )
 
 
